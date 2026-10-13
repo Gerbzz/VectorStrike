@@ -2,15 +2,13 @@
   <img src="assets/branding/VectorStrike.png" alt="Original VectorStrike praying mantis logo" width="160" height="160">
 </p>
 
-# VectorStrike
+<h1 align="center">VectorStrike</h1>
 
-**by PWDS**
-
-**Make every line count.**
+<p align="center"><strong>by PWDS</strong><br><strong>Make every line count.</strong></p>
 
 VectorStrike is a Rust desktop workspace for drawing and revising vector artwork. Its retained source includes path and layer tools; save an editable `.vstrike` document, use undo and redo while revising, and export SVG for use elsewhere.
 
-[Highlights](#highlights) · [Build and verification](#build-and-verification) · [Original artwork](assets/branding)
+<p align="center"><a href="#highlights">Highlights</a> · <a href="#build-and-verification">Build and verification</a> · <a href="assets/branding">Original artwork</a></p>
 
 ## Highlights
 
