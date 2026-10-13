@@ -4,21 +4,21 @@
 
 **Make every line count.**
 
-VectorStrike is a local workspace for creating and revising vector artwork. Build an editable document, use the desktop editor and command history, and work with SVG through the retained illustration engine.
+VectorStrike is a Rust desktop workspace for drawing and revising vector artwork. Its retained source includes path and layer tools; save an editable `.vstrike` document, use undo and redo while revising, and export SVG for use elsewhere.
 
 ### Highlights
 
-- Edit vector documents in a desktop workspace.
-- Revisit changes with command history.
-- Work with SVG and local rendering tools.
+- Work with vector paths and layers in the retained editor source.
+- Save and reopen `.vstrike` documents with undo and redo.
+- Export SVG from the illustration engine.
 
 ## Current status
 
 Source checkpoint. A previously reviewed Windows executable belongs to an earlier source revision; this candidate has not had a clean-checkout build or general platform acceptance. Legacy donor packaging scripts are unavailable for VectorStrike, and no release package is verified.
 
-## Shape an illustration
+## From document to SVG
 
-Keep artwork in an editable vector document, use the desktop editor's command history while revising, and work with SVG through the retained engine. This published candidate has not had a clean-checkout acceptance pass, so treat its editor and export paths as source capabilities awaiting verification.
+The focused source workflow creates a synthetic document, makes an edit, undoes and redoes it, saves and reopens `.vstrike`, then exports SVG. It also checks that malformed documents are refused. These model checks describe the file path; they do not verify the current desktop window or an installer.
 
 ## Build and verification
 
@@ -30,7 +30,7 @@ cargo test --locked -p vectorcraft-engine --test vectorstrike_workflow
 cargo build --locked -p vectorcraft --bin vectorstrike
 ```
 
-The focused workflow creates a synthetic document, edits it, verifies undo and redo, saves and reopens `.vstrike`, exports SVG, and checks malformed-document refusal. The app's control channel requires explicit authentication and scoped read/write roots. The independent operation review covers those controls and queued save completion for the frozen Windows binary; it does not replace a clean-checkout build and test.
+The focused workflow test covers the document sequence described above. The app's control channel requires explicit authentication and scoped read/write roots. The independent operation review covers those controls and queued save completion for the frozen Windows binary; it does not replace a clean-checkout build and test.
 
 ## Source terms and attribution
 
