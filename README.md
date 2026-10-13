@@ -1,8 +1,24 @@
-# VectorStrike source checkpoint
+# VectorStrike
 
-VectorStrike is a local Rust vector illustration editor built from the full upstream VectorCraft workspace at commit `231a97dd51a8dc39f62449ee81bc490f7ba9fe5c`. It retains the donor document engine, command history, renderer, SVG support, egui editor, CLI, web source, internal crates, and tests. The Windows desktop binary target is `vectorstrike`; internal crate names still use `vectorcraft-*`.
+**by PWDS**
 
-This is a source checkpoint. The previously reviewed Windows executable had SHA-256 `12883F56BFCD10565D5676D3E2776298D61FA74A3D9A07D52AB15F7BF8B2AC42`. This candidate changes its Windows version-resource text, so a new binary will have a different hash and needs its own verification. The [provenance note](STRIKE_PROVENANCE.md) describes the source; local freeze and acceptance evidence are not included in this checkout. No clean-checkout build, general cross-platform acceptance, or release package has been verified for this candidate.
+**Make every line count.**
+
+VectorStrike is a local workspace for creating and revising vector artwork. Build an editable document, use the desktop editor and command history, and work with SVG through the retained illustration engine.
+
+### Highlights
+
+- Edit vector documents in a desktop workspace.
+- Revisit changes with command history.
+- Work with SVG and local rendering tools.
+
+## Current status
+
+Source checkpoint. A previously reviewed Windows executable belongs to an earlier source revision; this candidate has not had a clean-checkout build or general platform acceptance. Legacy donor packaging scripts are unavailable for VectorStrike, and no release package is verified.
+
+## Shape an illustration
+
+Keep artwork in an editable vector document, use the desktop editor's command history while revising, and work with SVG through the retained engine. This published candidate has not had a clean-checkout acceptance pass, so treat its editor and export paths as source capabilities awaiting verification.
 
 ## Build and verification
 
@@ -27,3 +43,7 @@ The root workspace retains the upstream SPDX and repository metadata. The 22 unc
 ## Packaging status
 
 Legacy VectorCraft bundle, installer, signing, and platform package commands are **unavailable for VectorStrike**. In particular, do not run `cargo xtask bundle` or the scripts under `packaging/` as VectorStrike release steps: they still require removed donor artwork and donor product identifiers. [`packaging/README.md`](packaging/README.md) lists the boundary. No replacement app icon, installer, or release has been approved.
+
+## Source checkpoint
+
+VectorStrike adapts the full [VectorCraft](https://github.com/storytold/vectorcraft) workspace at `231a97dd51a8dc39f62449ee81bc490f7ba9fe5c`. The desktop binary target is `vectorstrike`; internal `vectorcraft-*` names remain. The earlier reviewed executable had SHA-256 `12883F56BFCD10565D5676D3E2776298D61FA74A3D9A07D52AB15F7BF8B2AC42`, but this candidate changes Windows version-resource text and therefore requires a new build and verification. See [STRIKE_PROVENANCE.md](STRIKE_PROVENANCE.md).
