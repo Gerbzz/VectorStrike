@@ -6,7 +6,7 @@
 
 VectorStrike is a Rust desktop workspace for drawing and revising vector artwork. Its retained source includes path and layer tools; save an editable `.vstrike` document, use undo and redo while revising, and export SVG for use elsewhere.
 
-### Highlights
+## Highlights
 
 - Work with vector paths and layers in the retained editor source.
 - Save and reopen `.vstrike` documents with undo and redo.
@@ -15,10 +15,6 @@ VectorStrike is a Rust desktop workspace for drawing and revising vector artwork
 ## Current status
 
 Source checkpoint. A previously reviewed Windows executable belongs to an earlier source revision; this candidate has not had a clean-checkout build or general platform acceptance. Legacy donor packaging scripts are unavailable for VectorStrike, and no release package is verified.
-
-## From document to SVG
-
-The focused source workflow creates a synthetic document, makes an edit, undoes and redoes it, saves and reopens `.vstrike`, then exports SVG. It also checks that malformed documents are refused. These model checks describe the file path; they do not verify the current desktop window or an installer.
 
 ## Build and verification
 
