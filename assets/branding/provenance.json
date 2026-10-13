@@ -1,0 +1,21 @@
+{
+  "app": "VectorStrike",
+  "asset": "assets/branding/VectorStrike.png",
+  "method": "Lossless rectangular extraction of original pixels with ImageMagick. No scaling, recoloring, tracing, generation, transparency fabrication or animal changes. Original cream outside rounded corners retained. Labels excluded.",
+  "coordinate_system": "Origin top-left; crop bounds [left, top, right, bottom), right/bottom exclusive.",
+  "source_sha256": "93e0c9b8f786a1d58051e65e3d964bd923967e99f699633ad365fcdcecf90aed",
+  "crop_bounds": [
+    696,
+    0,
+    1352,
+    656
+  ],
+  "dimensions": [
+    656,
+    656
+  ],
+  "sha256": "05c33a9cdadd89381eaf6a641f8b61079fa55c177385bb1fa35132bbaa7d9661",
+  "decoded_rgb_sha256": "4b7ffb55c102946c56821bcddb950f2c95b12db27be2604d9b7c8b21d21ebf1f",
+  "pixel_equality_verified": true,
+  "git_blob_sha": "4da67b84be57f6ae11dbb730e5a8bf99254a51aa"
+}
