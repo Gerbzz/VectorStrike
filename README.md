@@ -4,7 +4,14 @@
 
 <h1 align="center">VectorStrike</h1>
 
-<p align="center"><strong>by PWDS</strong><br><strong>Make every line count.</strong></p>
+<p align="center">
+  <a href="https://prowebdevsolutions.com"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/PWDS-logo-orange.svg">
+    <img src="assets/branding/PWDS-logo.png" alt="PWDS company logo" width="120">
+  </picture></a>
+</p>
+
+<p align="center"><strong>Make every line count.</strong></p>
 
 <p align="center">A native desktop workspace for drawing and revising vector artwork. Build with paths, shapes, type, and layers; save an editable <code>.vstrike</code> document; and export SVG for use elsewhere.</p>
 
@@ -63,3 +70,7 @@ Legacy VectorCraft bundle, installer, signing, and platform package commands are
 ## Source checkpoint
 
 VectorStrike adapts the full [VectorCraft](https://github.com/storytold/vectorcraft) workspace at `231a97dd51a8dc39f62449ee81bc490f7ba9fe5c`. The desktop binary target is `vectorstrike`; internal `vectorcraft-*` names remain. The retained screenshot executable has SHA-256 `89F4B228883FE6845459C33995F23E76FB361A0B50CD5D03A105EB508C56A865`. Its Cargo depfile points to the publication-candidate checkout, and the public source's checked Rust, lockfile, and build metadata match that checkout. The earlier independent operation review used a different executable; see [STRIKE_PROVENANCE.md](STRIKE_PROVENANCE.md) and [screenshot provenance](docs/SCREENSHOT_PROVENANCE.md).
+
+## PWDS brand artwork
+
+The company mark in this masthead is the existing [official PWDS logo](https://github.com/Gerbzz/PWDS-Website/blob/main/public/prowebdevsolutions-logo.png), with the [official orange display asset](https://prowebdevsolutions.com/images/prowebdevsolutions-logo-orange.svg) for dark backgrounds. The app logo above it remains the original Strike suite artwork.
