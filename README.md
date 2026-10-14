@@ -6,19 +6,35 @@
 
 <p align="center"><strong>by PWDS</strong><br><strong>Make every line count.</strong></p>
 
-VectorStrike is a Rust desktop workspace for drawing and revising vector artwork. Its retained source includes path and layer tools; save an editable `.vstrike` document, use undo and redo while revising, and export SVG for use elsewhere.
+<p align="center">A native desktop workspace for drawing and revising vector artwork. Build with paths, shapes, type, and layers; save an editable <code>.vstrike</code> document; and export SVG for use elsewhere.</p>
 
-<p align="center"><a href="#highlights">Highlights</a> · <a href="#build-and-verification">Build and verification</a> · <a href="assets/branding">Original artwork</a></p>
+<p align="center"><a href="#inside-the-workspace">Workspace</a> · <a href="#current-status">Current status</a> · <a href="#build-and-verification">Build</a> · <a href="#source-terms-and-attribution">Credits and source terms</a></p>
 
-## Highlights
+![VectorStrike desktop editor with the original Tidal Forms vector poster open](assets/screenshots/vectorstrike-workspace.png)
 
-- Work with vector paths and layers in the retained editor source.
-- Save and reopen `.vstrike` documents with undo and redo.
-- Export SVG from the illustration engine.
+*The running Windows source checkpoint at 1440 × 900. “Tidal Forms” is original sample artwork built in VectorStrike for this README, using the app's rectangle, ellipse, path, color, layer, and text commands. No donor or client artwork appears in these captures.*
+
+## Inside the workspace
+
+### Draw a composition from editable parts
+
+The poster is made from separate rectangles, ellipses, closed paths, and text on two layers. It was saved as a `.vstrike` document before the first screenshot. The artwork is a controlled sample of the current editor, not a claim of broad imported-file compatibility.
+
+### Recolor one shape
+
+Select the center ellipse and change its fill to explore another palette. The mint center, selection outline, and Fill property below come from an actual unsaved edit in the running app. The original saved document still has its warm yellow center.
+
+![VectorStrike showing the center ellipse selected and recolored mint in the Properties panel](assets/screenshots/vectorstrike-recolor.png)
+
+### See the document structure
+
+The Layers panel lists the Lettering layer and the individual shapes and paths in Layer 1. This is a narrower native window with the artboard fitted to its available canvas, captured after the same color edit.
+
+![VectorStrike narrow window with its Layers panel showing the poster's separate vector objects](assets/screenshots/vectorstrike-layers.png)
 
 ## Current status
 
-Source checkpoint. A previously reviewed Windows executable belongs to an earlier source revision; this candidate has not had a clean-checkout build or general platform acceptance. Legacy donor packaging scripts are unavailable for VectorStrike, and no release package is verified.
+VectorStrike is a **Windows source checkpoint**, with no verified installer or general platform acceptance. A retained Windows executable built from the published candidate source was launched and used to make the screenshots above. Its Rust files and `Cargo.lock` match the later local worktree; that worktree has six subsequent manifest license-metadata and Windows version-resource wording differences. This capture verifies the shown workflow, not a new clean-checkout build or broad product acceptance. Legacy donor packaging scripts remain unavailable for VectorStrike.
 
 ## Build and verification
 
@@ -30,15 +46,15 @@ cargo test --locked -p vectorcraft-engine --test vectorstrike_workflow
 cargo build --locked -p vectorcraft --bin vectorstrike
 ```
 
-The focused workflow test covers the document sequence described above. The app's control channel requires explicit authentication and scoped read/write roots. The independent operation review covers those controls and queued save completion for the frozen Windows binary; it does not replace a clean-checkout build and test.
+The focused workflow test covers paths, layers, native save and reopen, undo and redo, and SVG export. The app's control channel requires explicit authentication and scoped read/write roots. An independent operation review covers those controls and queued save completion for an earlier frozen Windows binary. The retained binary used for this README was freshly exercised with a separate original document; it does not replace a clean-checkout build and test. See the [screenshot provenance](docs/SCREENSHOT_PROVENANCE.md) for exact capture and source-match details.
 
 ## Source terms and attribution
 
-Original upstream VectorCraft code is provided under its MIT OR Apache-2.0 terms. Keep [`LICENSE-MIT`](LICENSE-MIT), [`LICENSE-APACHE`](LICENSE-APACHE), and [`NOTICE`](NOTICE) with that code. The new VectorStrike modifications and temporary V-shaped UI mark have **no newly granted first-party license stated in this checkout**. The mark is a placeholder, not an approved final logo. The removed donor dragon icon and ArtCraft trademark artwork are not included.
+Original upstream VectorCraft code is provided under its MIT OR Apache-2.0 terms. Keep [`LICENSE-MIT`](LICENSE-MIT), [`LICENSE-APACHE`](LICENSE-APACHE), and [`NOTICE`](NOTICE) with that code. The new VectorStrike modifications and temporary V-shaped UI mark have **no newly granted first-party license stated in this checkout**. The mark is a placeholder, not the approved final repo logo. Removed donor artwork is not included.
 
-The root workspace retains the upstream SPDX and repository metadata. The 22 unchanged donor packages keep their original inherited SPDX license field. The five packages containing local VectorStrike edits omit a package-level license field; their original upstream portions retain the donor grants. The Windows version resource names the original upstream copyright and refers to `NOTICE` for VectorStrike changes without asserting a combined-code license.
+The root workspace retains upstream SPDX and repository metadata. The 22 unchanged donor packages keep their original inherited SPDX license field. The five packages containing local VectorStrike edits omit a package-level license field; their original upstream portions retain the donor grants. The published Windows version resource names the original upstream copyright and refers to `NOTICE` for VectorStrike changes without asserting a combined-code license. Later local metadata edits are not in this public source checkpoint.
 
-[`ASSETS.md`](ASSETS.md) identifies retained fonts, SVG icons, and example art and points to their notices. Internal package names and retained upstream copyright remain attributed to VectorCraft authors; they do not assert that the donor work was authored by VectorStrike.
+[`ASSETS.md`](ASSETS.md) identifies retained fonts, SVG icons, example art, and the new README screenshots, with their notices and capture provenance. Internal package names and retained upstream copyright remain attributed to VectorCraft authors; they do not assert that the donor work was authored by VectorStrike.
 
 ## Packaging status
 
@@ -46,4 +62,4 @@ Legacy VectorCraft bundle, installer, signing, and platform package commands are
 
 ## Source checkpoint
 
-VectorStrike adapts the full [VectorCraft](https://github.com/storytold/vectorcraft) workspace at `231a97dd51a8dc39f62449ee81bc490f7ba9fe5c`. The desktop binary target is `vectorstrike`; internal `vectorcraft-*` names remain. The earlier reviewed executable had SHA-256 `12883F56BFCD10565D5676D3E2776298D61FA74A3D9A07D52AB15F7BF8B2AC42`, but this candidate changes Windows version-resource text and therefore requires a new build and verification. See [STRIKE_PROVENANCE.md](STRIKE_PROVENANCE.md).
+VectorStrike adapts the full [VectorCraft](https://github.com/storytold/vectorcraft) workspace at `231a97dd51a8dc39f62449ee81bc490f7ba9fe5c`. The desktop binary target is `vectorstrike`; internal `vectorcraft-*` names remain. The retained screenshot executable has SHA-256 `89F4B228883FE6845459C33995F23E76FB361A0B50CD5D03A105EB508C56A865`. Its Cargo depfile points to the publication-candidate checkout, and the public source's checked Rust, lockfile, and build metadata match that checkout. The earlier independent operation review used a different executable; see [STRIKE_PROVENANCE.md](STRIKE_PROVENANCE.md) and [screenshot provenance](docs/SCREENSHOT_PROVENANCE.md).
