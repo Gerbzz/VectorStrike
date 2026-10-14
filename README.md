@@ -50,7 +50,7 @@ The focused workflow test covers paths, layers, native save and reopen, undo and
 
 ## Source terms and attribution
 
-Original upstream VectorCraft code is provided under its MIT OR Apache-2.0 terms. Keep [`LICENSE-MIT`](LICENSE-MIT), [`LICENSE-APACHE`](LICENSE-APACHE), and [`NOTICE`](NOTICE) with that code. The new VectorStrike modifications and temporary V-shaped UI mark have **no newly granted first-party license stated in this checkout**. The mark is a placeholder, not the approved final repo logo. Removed donor artwork is not included.
+Original upstream VectorCraft code is provided under its MIT OR Apache-2.0 terms. Keep [`LICENSE-MIT`](LICENSE-MIT), [`LICENSE-APACHE`](LICENSE-APACHE), and [`NOTICE`](NOTICE) with that code. The new VectorStrike modifications and the V-shaped mark still shown inside the retained executable have **no newly granted first-party license stated in this checkout**. That in-app mark differs from the approved original praying-mantis repository logo at [`assets/branding/VectorStrike.png`](assets/branding/VectorStrike.png), shown above. Removed donor artwork is not included.
 
 The root workspace retains upstream SPDX and repository metadata. The 22 unchanged donor packages keep their original inherited SPDX license field. The five packages containing local VectorStrike edits omit a package-level license field; their original upstream portions retain the donor grants. The published Windows version resource names the original upstream copyright and refers to `NOTICE` for VectorStrike changes without asserting a combined-code license. Later local metadata edits are not in this public source checkpoint.
 
@@ -58,7 +58,7 @@ The root workspace retains upstream SPDX and repository metadata. The 22 unchang
 
 ## Packaging status
 
-Legacy VectorCraft bundle, installer, signing, and platform package commands are **unavailable for VectorStrike**. In particular, do not run `cargo xtask bundle` or the scripts under `packaging/` as VectorStrike release steps: they still require removed donor artwork and donor product identifiers. [`packaging/README.md`](packaging/README.md) lists the boundary. No replacement app icon, installer, or release has been approved.
+Legacy VectorCraft bundle, installer, signing, and platform package commands are **unavailable for VectorStrike**. In particular, do not run `cargo xtask bundle` or the scripts under `packaging/` as VectorStrike release steps: they still require removed donor artwork and donor product identifiers. [`packaging/README.md`](packaging/README.md) lists the boundary. The approved repository logo is available; its integration as the executable icon has not been verified, and no installer or release has been approved.
 
 ## Source checkpoint
 
