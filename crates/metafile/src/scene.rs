@@ -17,6 +17,9 @@ use crate::dib::Rgba;
 
 /// How deep symbols, brush art and pattern tiles may nest in one another (deeper art is left out).
 const MAX_NEST: u32 = 8;
+/// Most pattern tiles written in all. One fill tiles at most 250,000 (`PatternDef::offsets_covering`),
+/// but a tile whose art is filled with a pattern again multiplies that at every level of nesting.
+const MAX_TILES: usize = 250_000;
 /// Most pixels along a side of a gradient's image (its colours are smooth).
 const MAX_GRADIENT_PX: f64 = 512.0;
 /// Opacity at or above this is written as opaque.
@@ -29,6 +32,7 @@ const RASTER_FX: &str = "raster effects (shadows, glows, blurs, feathering) are 
 const CLIPPING: &str = "clipping masks are not applied: the art they clip is written whole";
 const FLAT_GRADIENTS: &str = "gradients are written as one colour, the average of their stops";
 const FLAT_PATTERNS: &str = "pattern fills are written as one colour";
+const TOO_MANY_TILES: &str = "pattern fills past 250,000 tiles in all are written as one colour";
 
 /// A stroke as a pen draws it.
 #[derive(Clone, Debug, PartialEq)]
@@ -112,11 +116,24 @@ pub(crate) struct Scene<'a> {
     opacity: f32,
     /// Symbols, brush art and pattern tiles being written inside one another.
     nest: u32,
+    /// Pattern tiles left to write ([`MAX_TILES`]).
+    tiles_left: usize,
 }
 
 impl<'a> Scene<'a> {
     pub fn new(doc: &'a Document, region: Rect, clips: bool) -> Self {
-        Self { doc, region, clips, ops: vec![], warnings: vec![], images: HashMap::new(), brushes: None, opacity: 1.0, nest: 0 }
+        Self {
+            doc,
+            region,
+            clips,
+            ops: vec![],
+            warnings: vec![],
+            images: HashMap::new(),
+            brushes: None,
+            opacity: 1.0,
+            nest: 0,
+            tiles_left: MAX_TILES,
+        }
     }
 
     /// The operations (clipped to the region when the format clips) and the warnings.
@@ -277,9 +294,16 @@ impl<'a> Scene<'a> {
         match paint {
             Paint::None => {}
             Paint::Gradient(g) if self.clips => self.gradient(bp, rule, g, opacity, bounds),
-            Paint::Pattern { pattern, xf } if self.clips && self.nest < MAX_NEST && self.doc.pattern(pattern).is_some() => {
+            Paint::Pattern { pattern, xf } if self.clips && self.nest < MAX_NEST && self.tiles_left > 0 && self.doc.pattern(pattern).is_some() => {
                 let area = bp.bounding_box().intersect(self.region);
                 let tiles = self.doc.pattern(pattern).map(|def| def.instances_in(*xf, area)).unwrap_or_default();
+                if tiles.len() > self.tiles_left {
+                    self.tiles_left = 0;
+                    self.warn(TOO_MANY_TILES);
+                    self.flat_fill(bp, rule, paint, opacity);
+                    return;
+                }
+                self.tiles_left -= tiles.len();
                 let outer = self.opacity;
                 self.opacity *= opacity.clamp(0.0, 1.0);
                 self.ops.push(Op::Clip { path: bp.clone(), rule });
@@ -289,12 +313,15 @@ impl<'a> Scene<'a> {
                 self.ops.push(Op::Unclip);
                 self.opacity = outer;
             }
-            p => {
-                let Some(rgb) = self.flat(p) else { return };
-                self.check_opacity(opacity);
-                self.ops.push(Op::Fill { path: bp.clone(), rule, rgb });
-            }
+            p => self.flat_fill(bp, rule, p, opacity),
         }
+    }
+
+    /// Fill `bp` with one colour for `paint` at `opacity`.
+    fn flat_fill(&mut self, bp: &BezPath, rule: FillRule, paint: &Paint, opacity: f32) {
+        let Some(rgb) = self.flat(paint) else { return };
+        self.check_opacity(opacity);
+        self.ops.push(Op::Fill { path: bp.clone(), rule, rgb });
     }
 
     /// One colour for a paint: a solid colour, the average of a gradient's stops, or a pattern's
@@ -417,5 +444,89 @@ impl<'a> Scene<'a> {
         }
         self.images.insert(key.to_string(), img.clone());
         img
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::tests::{doc_with, path, red};
+    use vectorcraft_doc::PatternDef;
+    use vectorcraft_geom::shapes;
+
+    fn pattern(name: &str) -> Paint {
+        Paint::Pattern { pattern: name.into(), xf: Affine::IDENTITY }
+    }
+
+    fn tile(name: &str, paint: Paint) -> PatternDef {
+        let bounds = Rect::new(0.0, 0.0, 4.0, 4.0);
+        let art = path(shapes::rectangle(bounds), paint, Paint::None, 0.0);
+        let mut def = PatternDef::new(name, vec![Arc::new(art)]);
+        def.tile = bounds;
+        def
+    }
+
+    #[test]
+    fn pattern_budget_boundary_and_later_fills() {
+        let area = Rect::new(0.0, 0.0, 8.0, 8.0);
+        let bp = shapes::rectangle(area).to_bezpath();
+        let mut doc = doc_with(8.0, 8.0, vec![]);
+        doc.patterns.push(tile("dots", red()));
+        let count = doc.patterns[0].instances_in(Affine::IDENTITY, area).len();
+        assert!(count > 1 && count < 100);
+        let mut scene = Scene::new(&doc, area, true);
+        assert_eq!(scene.tiles_left, MAX_TILES);
+        // A small injected budget exercises the real boundary without producing 250,000 tiles.
+        scene.tiles_left = count;
+        scene.fill(&bp, FillRule::NonZero, &pattern("dots"), 1.0, area);
+        assert_eq!(scene.tiles_left, 0);
+        assert!(scene.warnings.is_empty());
+        assert_eq!(scene.ops.iter().filter(|op| matches!(op, Op::Fill { .. })).count(), count);
+        let at = scene.ops.len();
+        scene.fill(&bp, FillRule::NonZero, &pattern("dots"), 1.0, area);
+        assert_eq!(scene.ops.len(), at + 1);
+        assert!(matches!(scene.ops.last(), Some(Op::Fill { .. })));
+        assert!(scene.warnings.iter().any(|w| w == FLAT_PATTERNS));
+
+        let mut scene = Scene::new(&doc, area, true);
+        scene.tiles_left = count - 1;
+        for _ in 0..2 {
+            scene.fill(&bp, FillRule::NonZero, &pattern("dots"), 0.5, area);
+        }
+        assert_eq!(scene.tiles_left, 0);
+        assert_eq!(scene.ops.len(), 2);
+        assert!(scene.ops.iter().all(|op| matches!(op, Op::Fill { rgb: [255, 0, 0], .. })));
+        assert_eq!(scene.warnings.iter().filter(|w| w.as_str() == TOO_MANY_TILES).count(), 1);
+        assert!(scene.warnings.iter().any(|w| w == TRANSPARENCY));
+        assert_eq!(scene.opacity, 1.0);
+        assert_eq!(scene.nest, 0);
+
+        let mut wmf = Scene::new(&doc, area, false);
+        wmf.fill(&bp, FillRule::NonZero, &pattern("dots"), 1.0, area);
+        assert_eq!(wmf.tiles_left, MAX_TILES);
+        assert_eq!(wmf.ops.len(), 1);
+        assert_eq!(wmf.warnings, [FLAT_PATTERNS]);
+    }
+
+    #[test]
+    fn nested_and_self_patterns_share_one_budget() {
+        let area = Rect::new(0.0, 0.0, 8.0, 8.0);
+        let bp = shapes::rectangle(area).to_bezpath();
+        let mut doc = doc_with(8.0, 8.0, vec![]);
+        doc.patterns.push(tile("dots", red()));
+        doc.patterns.push(tile("nested", pattern("dots")));
+        doc.patterns.push(tile("self", pattern("self")));
+        for name in ["nested", "self"] {
+            let mut scene = Scene::new(&doc, area, true);
+            scene.tiles_left = 5;
+            scene.fill(&bp, FillRule::NonZero, &pattern(name), 0.5, area);
+            assert_eq!(scene.tiles_left, 0);
+            assert!(scene.ops.len() < 20, "{} operations", scene.ops.len());
+            assert!(scene.warnings.iter().any(|w| w == FLAT_PATTERNS));
+            let clips = scene.ops.iter().filter(|op| matches!(op, Op::Clip { .. })).count();
+            assert_eq!(clips, scene.ops.iter().filter(|op| matches!(op, Op::Unclip)).count());
+            assert_eq!(scene.opacity, 1.0);
+            assert_eq!(scene.nest, 0);
+        }
     }
 }
