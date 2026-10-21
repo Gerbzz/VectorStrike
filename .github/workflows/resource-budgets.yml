@@ -49,6 +49,11 @@ jobs:
         env:
           CARGO_NET_OFFLINE: "true"
         run: cargo run --locked -p xtask -- ci
+      - name: Finish workspace tests after a failed gate
+        if: failure()
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: cargo test --locked --workspace --no-fail-fast
       - name: Check user-visible branding after a failed gate
         if: failure()
         env:
