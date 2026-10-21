@@ -598,16 +598,12 @@ mod tests {
     #[test]
     fn native_identity_preserves_older_version_headers() {
         let doc = Document::new(100.0, 50.0);
-        for (version, craft, strike) in [
-            (1, "drawcraft", "drawcraft"),
-            (2, "drawcraft", "drawcraft"),
-            (3, "vectorcraft", "vectorcraft"),
-            (4, "vectorcraft", "vstrike"),
-        ] {
-            for (identity, expected_format, generator) in [
-                (NativeIdentity::VectorCraft, craft, "VectorCraft "),
-                (NativeIdentity::VectorStrike, strike, "VectorStrike "),
-            ] {
+        for (version, craft, strike) in
+            [(1, "drawcraft", "drawcraft"), (2, "drawcraft", "drawcraft"), (3, "vectorcraft", "vectorcraft"), (4, "vectorcraft", "vstrike")]
+        {
+            for (identity, expected_format, generator) in
+                [(NativeIdentity::VectorCraft, craft, "VectorCraft "), (NativeIdentity::VectorStrike, strike, "VectorStrike ")]
+            {
                 let bytes = save_with(&doc, &SaveOptions { identity, version, ..SaveOptions::default() }).unwrap();
                 let j: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
                 assert_eq!(j["format"], expected_format, "{identity:?} v{version}");
