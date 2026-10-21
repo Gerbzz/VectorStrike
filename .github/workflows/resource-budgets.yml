@@ -49,6 +49,14 @@ jobs:
         env:
           CARGO_NET_OFFLINE: "true"
         run: cargo run --locked -p xtask -- ci
+      - name: Run targeted UI regressions
+        if: always()
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: |
+          cargo test --locked -p vectorcraft-ui-egui --lib i18n::tests:: -- --test-threads=1
+          cargo test --locked -p vectorcraft-ui-egui --lib tests_place::a_vectorcraft_document_places_linked_and_edit_original_opens_it -- --exact --test-threads=1
+          cargo test --locked -p vectorcraft-ui-egui --lib titlebar::tests::caption_buttons_take_the_right_end_and_nothing_overlaps_down_to_800_pt -- --exact --test-threads=1
       - name: Finish workspace tests after a failed gate
         if: failure()
         env:
