@@ -79,10 +79,15 @@ fn use_compression_preference_sets_the_default() {
 #[test]
 fn saves_for_older_versions() {
     let mut s = session();
-    for v in [1, 2] {
+    let current = json_of(&saved(&mut s, json!({})));
+    assert_eq!(
+        (current["format"].as_str(), current["version"].as_u64()),
+        (Some("vstrike"), Some(u64::from(vectorcraft_format::VERSION)))
+    );
+    for (v, expected_format) in [(1, "drawcraft"), (2, "drawcraft"), (3, "vectorcraft")] {
         let bytes = saved(&mut s, json!({"version": v}));
         let j = json_of(&bytes);
-        assert_eq!((j["format"].as_str(), j["version"].as_u64()), (Some("drawcraft"), Some(v)));
+        assert_eq!((j["format"].as_str(), j["version"].as_u64()), (Some(expected_format), Some(v)));
         open(&mut s, "old.drawcraft", &bytes);
         assert_eq!(s.doc().unwrap().doc.node_count(), 2);
     }
