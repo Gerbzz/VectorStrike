@@ -49,6 +49,21 @@ jobs:
         env:
           CARGO_NET_OFFLINE: "true"
         run: cargo run --locked -p xtask -- ci
+      - name: Check user-visible branding after a failed gate
+        if: failure()
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: cargo run --locked -p xtask -- brands
+      - name: Check dependency layers after a failed gate
+        if: failure()
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: cargo run --locked -p xtask -- layers
+      - name: Check WASM after a failed gate
+        if: failure()
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: cargo run --locked -p xtask -- wasm
       - name: Verify the lockfile is unchanged
         if: always()
         run: git diff --exit-code -- Cargo.lock
