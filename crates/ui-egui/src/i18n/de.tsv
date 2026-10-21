@@ -69,7 +69,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	Ein niedrigerer Wert folgt dem Strich genauer; ein höherer ergibt weniger Punkte und glattere Kurven.
 	A new preset starting from the selected one	Eine neue Vorgabe auf Grundlage der ausgewählten
 	A saved copy of the selected preset	Eine gespeicherte Kopie der ausgewählten Vorgabe
-	About VectorCraft	Über VectorCraft
+	About VectorStrike	Über VectorStrike
 	above	bei mehr als
 	Absolute Position	Absolute Position
 	Accurate	Genau
@@ -211,6 +211,7 @@
 	Artboard:	Zeichenfläche:
 	Artboards	Zeichenflächen
 	ArtCraft Website	ArtCraft-Website
+	ArtCraft upstream website	Website des Ursprungsprojekts ArtCraft
 	ArtCraft website	ArtCraft-Website
 	Artwork Colors	Farben der Grafik
 	As Multiple Assets	Als mehrere Assets
@@ -2014,7 +2015,7 @@
 	Quarter Space	Viertelgeviert-Leerzeichen
 	Quick Actions	Schnellaktionen
 	Quickly start a new file	Schnell eine neue Datei beginnen
-	Quit VectorCraft	VectorCraft beenden
+	Quit VectorStrike	VectorStrike beenden
 	Radar Graph Tool	Netzdiagramm-Werkzeug
 	Radial	Radial
 	Radial Glows	Radiale Leuchteffekte
@@ -2132,7 +2133,7 @@
 	{count} folder(s) or file(s) couldn't be read	{count} Ordner oder Datei(en) konnten nicht gelesen werden
 	The search stopped at its limit: search a smaller folder.	Die Suche hat ihr Limit erreicht: Durchsuchen Sie einen kleineren Ordner.
 	Copy only fonts you own or are licensed to install.	Kopieren Sie nur Schriften, die Ihnen gehören oder für deren Installation Sie eine Lizenz haben.
-	VectorCraft copies the fonts to {folder}.	VectorCraft kopiert die Schriften nach {folder}.
+	VectorStrike copies the fonts to {folder}.	VectorStrike kopiert die Schriften nach {folder}.
 	Registered Trademark Symbol	Symbol für eingetragene Marke
 	Registration marks	Passermarken
 	Registry name:	Registrierungsname:
@@ -2993,10 +2994,12 @@
 	Vector Halftone	Vektor-Halbton
 	Vector Halftone…	Vektor-Halbton…
 	Vector illustration — fast, open, scriptable.	Vektorillustration – schnell, offen, skriptfähig.
-	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft wurde beim letzten Mal nicht normal beendet. Diese Dokumente hatten ungespeicherte Änderungen:
-	VectorCraft Help…	VectorCraft-Hilfe…
+	VectorStrike didn't quit normally last time. These documents had unsaved changes:	VectorStrike wurde beim letzten Mal nicht normal beendet. Diese Dokumente hatten ungespeicherte Änderungen:
+	VectorStrike Help…	VectorStrike-Hilfe…
 	VectorCraft on getartcraft.com	VectorCraft auf getartcraft.com
+	VectorCraft upstream project	Ursprungsprojekt VectorCraft
 	VectorCraft on GitHub	VectorCraft auf GitHub
+	VectorCraft upstream source	Quellcode des Ursprungsprojekts VectorCraft
 	Vectors	Vektoren
 	Version {version} — open-source vector illustration in pure Rust.	Version {version} – Open-Source-Vektorillustration in reinem Rust.
 	Version:	Version:
@@ -3035,7 +3038,7 @@
 	Web Snap:	Web-Ausrichtung:
 	Weight	Stärke
 	Weight:	Stärke:
-	Welcome to VectorCraft	Willkommen bei VectorCraft
+	Welcome to VectorStrike	Willkommen bei VectorStrike
 	When pasting text	Beim Einfügen von Text
 	White	Weiß
 	Widget Position:	Widget-Position:
@@ -3821,7 +3824,7 @@ theme	Appearance	Erscheinungsbild
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	Dienste
-	Hide VectorCraft	VectorCraft ausblenden
+	Hide VectorStrike	VectorStrike ausblenden
 	Zoom	Zoomen
 	Bring All to Front	Alle nach vorne bringen
 	Settings	Einstellungen
@@ -3829,7 +3832,7 @@ theme	Appearance	Erscheinungsbild
 	On: one locked object showing the document, updated when it changes.	Ein: ein gesperrtes Objekt, das das Dokument zeigt und aktualisiert wird, wenn es sich ändert.
 	Off: an editable copy of its art, embedded in this document.	Aus: eine bearbeitbare Kopie seiner Grafik, eingebettet in dieses Dokument.
 	Images: link to the file instead of only embedding it.	Bilder: mit der Datei verknüpfen, statt sie nur einzubetten.
-	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft-Dokumente: ein gesperrtes Objekt, das aktualisiert wird, wenn sich die Datei ändert.
+	VectorStrike documents: one locked object, updated when the file changes.	VectorStrike-Dokumente: ein gesperrtes Objekt, das aktualisiert wird, wenn sich die Datei ändert.
 	A file dialog is open: choose there first	Ein Dateidialog ist geöffnet: Treffen Sie zuerst dort Ihre Auswahl
 	Shaper	Shaper
 	Expand Shaper Group	Shaper-Gruppe umwandeln
@@ -4060,3 +4063,11 @@ theme	Appearance	Erscheinungsbild
 	Stroke Pressure	Strichdruck
 	Right Diagonal	Diagonal nach rechts
 	Left Diagonal	Diagonal nach links
+@msg	can't save version {0}: supported versions are {MIN_VERSION} to {VERSION}	Version {0} kann nicht gespeichert werden: unterstützt werden die Versionen {MIN_VERSION} bis {VERSION}
+@msg	file version {0} is newer than this editor supports ({VERSION})	Dateiversion {0} ist neuer als die von diesem Editor unterstützte Version ({VERSION})
+@msg	not a native vector document: {0}	kein natives Vektordokument: {0}
+@msg	other apps' and system folders are not searched: {path}	Ordner anderer Apps und Systemordner werden nicht durchsucht: {path}
+@msg	save fingerprint state is unavailable	der Zustand des Datei-Fingerabdrucks ist nicht verfügbar
+@msg	the Shared or Public folder in Users is not searched: {path}	der Ordner Shared oder Public unter Users wird nicht durchsucht: {path}
+@msg	{label} failed: {e}	{label} fehlgeschlagen: {e}
+@msg	{p}: export destination exists; choose another path or set replaceExisting: true	{p}: Exportziel ist bereits vorhanden; wählen Sie einen anderen Pfad oder setzen Sie replaceExisting: true
