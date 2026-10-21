@@ -1,0 +1,82 @@
+name: Resource budget safeguards
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: resource-budgets-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  CARGO_PROFILE_TEST_DEBUG: "0"
+  RUST_TEST_THREADS: "1"
+  RUSTUP_TOOLCHAIN: stable
+
+jobs:
+  repository-ci:
+    name: Repository CI (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out the exact head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify the checked-out revision
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Install native build libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libdbus-1-dev libegl1-mesa-dev libfontconfig1-dev libgtk-3-dev libssl-dev libudev-dev libwayland-dev libx11-dev libxkbcommon-dev pkg-config
+      - name: Install the stable Rust checks and WASM target
+        run: rustup toolchain install stable --profile minimal --component clippy --component rustfmt --target wasm32-unknown-unknown --no-self-update
+      - name: Fetch the locked dependency graph
+        run: cargo fetch --locked
+      - name: Run every repository gate
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: cargo run --locked -p xtask -- ci
+      - name: Verify the lockfile is unchanged
+        if: always()
+        run: git diff --exit-code -- Cargo.lock
+
+  windows-regressions:
+    name: Native regressions (Windows)
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - name: Check out the exact head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify the checked-out revision
+        shell: pwsh
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          if ((git rev-parse HEAD).Trim() -ne $env:EXPECTED_HEAD) { throw 'The checkout does not match the requested head.' }
+      - name: Install stable Rust
+        run: rustup toolchain install stable --profile minimal --no-self-update
+      - name: Run document library tests
+        run: cargo test --locked -p vectorcraft-doc --lib -- --test-threads=1
+      - name: Run metafile library tests
+        run: cargo test --locked -p vectorcraft-metafile --lib -- --test-threads=1
+      - name: Verify the isolation rendering behavior
+        run: cargo test --locked -p vectorcraft-render --lib tests_isolation -- --test-threads=1
+      - name: Verify the lockfile is unchanged
+        if: always()
+        run: git diff --exit-code -- Cargo.lock
