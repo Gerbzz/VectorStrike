@@ -44,7 +44,7 @@ fn preview_opens_with_a_warning_and_never_saves_to_the_source() {
         assert!(w.contains("2×1") && w.contains("native Affinity document could not be read") && w.contains("no layers"), "{w}");
         let st = s.doc().unwrap();
         assert!(st.path.is_none());
-        assert_eq!(st.format, "vectorcraft");
+        assert_eq!(st.format, "vectorstrike");
         assert_eq!((st.doc.artboards[0].rect.width(), st.doc.artboards[0].rect.height()), (2.0, 1.0));
         assert_eq!(st.doc.images.values().next().unwrap().bytes.as_slice(), png());
         let saved = vectorcraft_format::save_file(&st.doc);
@@ -52,8 +52,8 @@ fn preview_opens_with_a_warning_and_never_saves_to_the_source() {
         assert_eq!(reopened.doc.images, st.doc.images);
         let plan = save_plan(&s, SaveMode::Save, &json!({})).unwrap();
         assert!(plan.path.is_none(), "Save must ask for a new destination");
-        assert_eq!(plan.format.id, "vectorcraft");
-        assert!(plan.name.ends_with(".vectorcraft"));
+        assert_eq!(plan.format.id, "vectorstrike");
+        assert!(plan.name.ends_with(".vstrike"));
     }
     let f = format("affinity").unwrap();
     assert!(f.read && !f.write);

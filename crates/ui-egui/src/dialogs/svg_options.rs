@@ -384,30 +384,34 @@ mod tests {
 
     #[test]
     fn save_as_svg_asks_for_options_then_save_reuses_them() {
-        let (mut app, written) = app("/tmp/doc.svg");
+        let files = crate::tests_svg::DiskFiles::new("svg-options");
+        let target = files.path("doc.svg");
+        let (mut app, written) = app(&target);
+        files.attach(&mut app, &written);
         let r = app.run("file.saveAs", Value::Null).unwrap();
         assert_eq!(r["dialog"], KIND);
         let d = app.ui.dialog.clone().unwrap();
-        assert_eq!((d.str("mode"), d.str("path")), ("save".into(), "/tmp/doc.svg".into()));
+        assert_eq!((d.str("mode"), d.str("path")), ("save".into(), target.clone()));
         frame(&mut app);
         app.ui.dialog.as_mut().unwrap().fields.insert("styling".into(), json!("style"));
         super::super::confirm(&mut app).unwrap();
         assert!(text(&written, 0).contains("style=\"fill:"));
         let st = app.session.active().unwrap();
-        assert_eq!(st.path.as_deref(), Some("/tmp/doc.svg"));
+        assert_eq!(st.path.as_deref(), Some(target.as_str()));
         assert!(!st.is_dirty());
         // Save writes SVG again with the same options, no dialog.
         app.run("shape.ellipse", json!({"x": 60, "y": 10, "width": 20, "height": 20})).unwrap();
         app.run("file.save", Value::Null).unwrap();
         assert!(app.ui.dialog.is_none());
-        assert_eq!(written.borrow()[1].0, "/tmp/doc.svg");
+        assert_eq!(written.borrow()[1].0, target);
         assert!(text(&written, 1).contains("style=\"fill:") && text(&written, 1).matches("<path").count() == 2);
+        assert_eq!(std::fs::read(&target).unwrap(), written.borrow()[1].1);
         // Save a Copy (options given) leaves the document's path alone.
-        app.run("file.saveCopy", json!({"path": "/tmp/copy.svg", "svg": {"minify": true}})).unwrap();
+        app.run("file.saveCopy", json!({"path": files.path("copy.svg"), "svg": {"minify": true}})).unwrap();
         assert!(!text(&written, 2).trim_end().contains('\n') && !text(&written, 2).contains("<?xml"), "minified");
-        assert_eq!(app.session.active().unwrap().path.as_deref(), Some("/tmp/doc.svg"));
+        assert_eq!(app.session.active().unwrap().path.as_deref(), Some(target.as_str()));
         // A native Save As needs no options.
-        app.run("file.saveAs", json!({"path": "/tmp/doc.vectorcraft"})).unwrap();
+        app.run("file.saveAs", json!({"path": files.path("doc.vectorcraft")})).unwrap();
         assert!(vectorcraft_format::sniff(&written.borrow()[3].1));
     }
 

@@ -407,12 +407,37 @@ impl RepeatKind {
             RepeatKind::Mirror { .. } => "Mirror Repeat",
         }
     }
+    /// How many instances [`repeat_transforms`] makes (with its clamps).
+    fn count(&self) -> usize {
+        match self {
+            RepeatKind::Radial { instances, .. } => (*instances).clamp(1, 1000) as usize,
+            RepeatKind::Grid { rows, cols, .. } => (*rows).clamp(1, 500) as usize * (*cols).clamp(1, 500) as usize,
+            RepeatKind::Mirror { .. } => 2,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RepeatSpec {
     pub kind: RepeatKind,
     pub source: Vec<Arc<Node>>,
+}
+
+/// Most instances a Repeat makes in all, those of the Repeats nested in its source included: as
+/// many as one 500 × 500 grid, the budget [`PatternDef::offsets_covering`] also keeps.
+const MAX_REPEAT_INSTANCES: usize = 250_000;
+
+/// Instances the Repeats in `nodes` make in all (0 when there are none).
+fn nested_instances(nodes: &[Arc<Node>]) -> usize {
+    let mut sum = 0usize;
+    for n in nodes {
+        sum = sum.saturating_add(match (&n.kind, n.children()) {
+            (NodeKind::Repeat(r), _) => r.instances_in_all(),
+            (_, Some(c)) => nested_instances(c),
+            _ => 0,
+        });
+    }
+    sum
 }
 
 /// Reflection across the line through `c` with direction angle `deg`.
@@ -476,7 +501,21 @@ impl RepeatSpec {
         crate::live::nodes_bounds(&self.source)
     }
     pub fn transforms(&self) -> Vec<Affine> {
-        repeat_transforms(&self.kind, self.source_bounds())
+        let mut v = repeat_transforms(&self.kind, self.source_bounds());
+        // Each instance draws the Repeats in the source again, so nested ones multiply (a 500 × 500
+        // grid of one is 62.5 billion instances): keep the first that fit the budget.
+        v.truncate(self.kept(nested_instances(&self.source)));
+        v
+    }
+    /// How many of its instances this Repeat keeps when each makes `nested` instances of the
+    /// Repeats in its source: as many as fit in [`MAX_REPEAT_INSTANCES`], at least one.
+    fn kept(&self, nested: usize) -> usize {
+        self.kind.count().min(MAX_REPEAT_INSTANCES / nested.max(1)).max(1)
+    }
+    /// Instances made in all, those of the Repeats nested in the source included.
+    fn instances_in_all(&self) -> usize {
+        let nested = nested_instances(&self.source);
+        self.kept(nested).saturating_mul(nested.max(1))
     }
     /// Evaluated instances: one group of the (transformed) source per instance (ids 0).
     pub fn expand(&self) -> Vec<Node> {
@@ -733,6 +772,61 @@ mod tests {
         m.transform(Affine::rotate(std::f64::consts::FRAC_PI_2), false);
         let RepeatKind::Mirror { angle, .. } = m.kind else { panic!() };
         assert!((angle.rem_euclid(180.0) - 0.0).abs() < 1e-9 || (angle.rem_euclid(180.0) - 180.0).abs() < 1e-9, "{angle}");
+    }
+
+    #[test]
+    fn nested_repeats_share_one_instance_budget() {
+        // Count transforms, never expand the potentially enormous nested art.
+        fn made(r: &RepeatSpec) -> usize {
+            fn each(n: &Node) -> usize {
+                match &n.kind {
+                    NodeKind::Repeat(r) => made(r),
+                    _ => n.children().map_or(1, |c| c.iter().map(|n| each(n)).sum()),
+                }
+            }
+            r.transforms().len().saturating_mul(r.source.iter().map(|n| each(n)).sum())
+        }
+        let grid = |source: Arc<Node>| {
+            let mut g = RepeatSpec::grid(vec![source], 0.0, 0.0);
+            if let RepeatKind::Grid { rows, cols, .. } = &mut g.kind {
+                *rows = 500;
+                *cols = 500;
+            }
+            g
+        };
+        let repeat = |r: RepeatSpec| Arc::new(Node::new(NodeId(2), NodeKind::Repeat(r)));
+        let inner = grid(sq(0.0, 0.0, 1.0));
+        assert_eq!(made(&inner), 250_000);
+        // A 500 × 500 grid of one used to request 62.5 billion instances.
+        assert_eq!(made(&grid(repeat(inner.clone()))), 250_000);
+        assert_eq!(made(&RepeatSpec::mirror(vec![repeat(inner.clone())], 90.0, 5.0)), 250_000);
+        let group = Arc::new(Node::group(NodeId(3), vec![repeat(inner)]));
+        assert_eq!(made(&RepeatSpec::mirror(vec![group], 90.0, 5.0)), 250_000);
+        // Small nests and their evaluated outer copies remain intact.
+        let small = RepeatSpec::mirror(vec![repeat(RepeatSpec::grid(vec![sq(0.0, 0.0, 10.0)], 1.0, 1.0))], 90.0, 5.0);
+        assert_eq!(made(&small), 18);
+        assert_eq!(small.expand().len(), 2);
+    }
+
+    #[test]
+    fn repeat_budget_uses_existing_clamps_and_keeps_one_source() {
+        for instances in [0, 1, 1000, u32::MAX] {
+            let r = RepeatSpec::radial(vec![sq(0.0, 0.0, 1.0)], instances, None);
+            assert_eq!(r.kind.count(), repeat_transforms(&r.kind, r.source_bounds()).len());
+        }
+        for count in [0, 1, 500, u32::MAX] {
+            let mut r = RepeatSpec::grid(vec![sq(0.0, 0.0, 1.0)], 0.0, 0.0);
+            if let RepeatKind::Grid { rows, cols, .. } = &mut r.kind {
+                *rows = count;
+                *cols = count;
+            }
+            assert_eq!(r.kind.count(), repeat_transforms(&r.kind, r.source_bounds()).len());
+            assert_eq!(r.kept(0), r.kind.count());
+        }
+        let r = RepeatSpec::mirror(vec![sq(0.0, 0.0, 1.0)], 90.0, 5.0);
+        assert_eq!(r.kind.count(), 2);
+        // Upstream deliberately retains one copy even if its nested source exceeds the budget.
+        assert_eq!(r.kept(MAX_REPEAT_INSTANCES.saturating_mul(2)), 1);
     }
 
     #[test]

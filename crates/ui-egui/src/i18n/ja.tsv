@@ -14,7 +14,7 @@
 # tested) — and the status and error messages (`@msg` rows at the end, `COMPLETE_MESSAGES`, tested).
 # Left in English on purpose (`MENU_KEEP_AS_IS` in the tests): the product name, language
 # names, OpenType, the built-in workspace names and the bracketed perspective grid preset names.
-	About VectorCraft	VectorCraft について
+	About VectorStrike	VectorStrike について
 	All Scripts	すべての文字
 	Anchors:	アンカー:
 	Any Kind	すべての種類
@@ -64,7 +64,7 @@
 	Medium Dark	やや暗い
 	Medium Light	やや明るい
 	Light	明るい
-	Quit VectorCraft	VectorCraft を終了
+	Quit VectorStrike	VectorStrike を終了
 	File	ファイル
 	New…	新規…
 	New from Template…	テンプレートから新規…
@@ -636,10 +636,13 @@
 	Symbol Libraries	シンボルライブラリ
 	Help	ヘルプ
 	ArtCraft Website	ArtCraft の Web サイト
+	ArtCraft upstream website	元プロジェクト ArtCraft の Web サイト
 	VectorCraft on getartcraft.com	getartcraft.com の VectorCraft
+	VectorCraft upstream project	元プロジェクト VectorCraft
 	VectorCraft on GitHub	GitHub の VectorCraft
+	VectorCraft upstream source	元プロジェクト VectorCraft のソースコード
 	Search Commands…	コマンドを検索…
-	VectorCraft Help…	VectorCraft ヘルプ…
+	VectorStrike Help…	VectorStrike ヘルプ…
 	Preview	プレビュー
 	Show Edges	エッジを表示
 	Show Corner Widget	コーナーウィジェットを表示
@@ -2179,7 +2182,7 @@
 	{count} folder(s) or file(s) couldn't be read	{count} 個のフォルダーまたはファイルを読み込めませんでした
 	The search stopped at its limit: search a smaller folder.	検索は上限で停止しました。より小さなフォルダーを検索してください。
 	Copy only fonts you own or are licensed to install.	所有しているフォント、またはインストールするライセンスがあるフォントだけをコピーしてください。
-	VectorCraft copies the fonts to {folder}.	VectorCraft はフォントを {folder} にコピーします。
+	VectorStrike copies the fonts to {folder}.	VectorStrike はフォントを {folder} にコピーします。
 	Registry name:	レジストリ名:
 	Release Compound Shape	複合シェイプを解除
 	Release Opacity Mask	不透明マスクを解除
@@ -2749,7 +2752,7 @@
 	Variation:	バリエーション:
 	Vector Halftone	ベクトルハーフトーン
 	Vector illustration — fast, open, scriptable.	ベクターイラスト — 高速・オープン・スクリプト対応
-	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft は前回正常に終了しませんでした。次のドキュメントに未保存の変更があります:
+	VectorStrike didn't quit normally last time. These documents had unsaved changes:	VectorStrike は前回正常に終了しませんでした。次のドキュメントに未保存の変更があります:
 	Vectors	ベクター
 	Version {version} — open-source vector illustration in pure Rust.	バージョン {version} — Rust だけで書かれたオープンソースのベクターイラストアプリ。
 	Version:	バージョン:
@@ -2770,7 +2773,7 @@
 	Web Shift	Web シフト
 	Web Snap:	Web スナップ:
 	Weight:	線幅:
-	Welcome to VectorCraft	VectorCraft へようこそ
+	Welcome to VectorStrike	VectorStrike へようこそ
 	When pasting text	テキストをペーストするとき
 	White	白
 	Widget Position:	ウィジェットの位置:
@@ -3279,7 +3282,7 @@ axis	Both	両方
 
 # The macOS menu bar (native_menu): the app and Window menus' system items, Settings pages.
 	Services	サービス
-	Hide VectorCraft	VectorCraft を隠す
+	Hide VectorStrike	VectorStrike を隠す
 	Zoom	拡大/縮小
 	Bring All to Front	すべてを手前に移動
 	Settings	環境設定
@@ -3288,7 +3291,7 @@ theme	Appearance	外観
 	On: one locked object showing the document, updated when it changes.	オン：ドキュメントを表示するロックされた 1 つのオブジェクト。ドキュメントの変更時に更新されます。
 	Off: an editable copy of its art, embedded in this document.	オフ：アートの編集可能なコピーをこのドキュメントに埋め込みます。
 	Images: link to the file instead of only embedding it.	画像：埋め込むだけでなく、ファイルにリンクします。
-	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft ドキュメント：ロックされた 1 つのオブジェクト。ファイルの変更時に更新されます。
+	VectorStrike documents: one locked object, updated when the file changes.	VectorStrike ドキュメント：ロックされた 1 つのオブジェクト。ファイルの変更時に更新されます。
 	A file dialog is open: choose there first	ファイルダイアログが開いています。先にそちらで選択してください
 	Shaper	Shaper
 	Expand Shaper Group	Shaper グループを拡張
@@ -4100,3 +4103,11 @@ lighting	Light	ライト
 	Vertical Guide	垂直ガイド
 	Horizontal Guide	水平ガイド
 	Move Guide to Layer	ガイドをレイヤーへ移動
+@msg	can't save version {0}: supported versions are {MIN_VERSION} to {VERSION}	バージョン {0} では保存できません。対応するバージョンは {MIN_VERSION} から {VERSION} です
+@msg	file version {0} is newer than this editor supports ({VERSION})	ファイルのバージョン {0} は、このエディターが対応するバージョン ({VERSION}) より新しいものです
+@msg	not a native vector document: {0}	ネイティブ形式のベクタードキュメントではありません: {0}
+@msg	other apps' and system folders are not searched: {path}	他のアプリのフォルダーとシステムフォルダーは検索しません: {path}
+@msg	save fingerprint state is unavailable	保存用フィンガープリントの状態を利用できません
+@msg	the Shared or Public folder in Users is not searched: {path}	Users 内の Shared または Public フォルダーは検索しません: {path}
+@msg	{label} failed: {e}	{label} に失敗しました: {e}
+@msg	{p}: export destination exists; choose another path or set replaceExisting: true	{p}: 書き出し先がすでに存在します。別のパスを選ぶか、replaceExisting: true を指定してください

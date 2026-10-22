@@ -42,8 +42,9 @@ fn lossy_eps() -> Vec<u8> {
 }
 
 fn dir(name: &str) -> std::path::PathBuf {
-    let d = std::env::temp_dir().join(format!("vc-lossy-{name}-{}", std::process::id()));
-    std::fs::create_dir_all(&d).unwrap();
+    let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+    let d = std::env::temp_dir().join(format!("vc-lossy-{name}-{}-{stamp}", std::process::id()));
+    std::fs::create_dir(&d).unwrap();
     d
 }
 
@@ -63,25 +64,50 @@ fn a_file_the_import_left_things_out_of_is_not_written_over_unasked() {
     assert_eq!(std::fs::read(&src).unwrap(), original);
     // However the path is spelled.
     let spelled = d.join(".").join("art.eps");
-    assert!(s.execute("document.export", &json!({ "path": spelled.to_string_lossy(), "format": "eps" })).is_err());
+    let e = s.execute("document.export", &json!({ "path": spelled.to_string_lossy(), "format": "eps" })).unwrap_err().to_string();
+    assert!(e.contains("left things out") && e.contains("acknowledgeLoss"), "{e}");
+    assert_eq!(std::fs::read(&src).unwrap(), original);
 
-    // Another name is fine, and so is replacing the file when asked to.
+    // Acknowledging the import loss alone does not allow replacing an existing destination.
+    let e =
+        s.execute("document.export", &json!({ "path": src.to_string_lossy(), "format": "eps", "acknowledgeLoss": true })).unwrap_err().to_string();
+    assert!(e.contains("export destination exists") && e.contains("replaceExisting"), "{e}");
+    assert_eq!(std::fs::read(&src).unwrap(), original);
+
+    // Allowing replacement alone does not acknowledge the import loss.
+    let e =
+        s.execute("document.export", &json!({ "path": src.to_string_lossy(), "format": "eps", "replaceExisting": true })).unwrap_err().to_string();
+    assert!(e.contains("left things out") && e.contains("acknowledgeLoss"), "{e}");
+    assert_eq!(std::fs::read(&src).unwrap(), original);
+
+    // Another name is fine and keeps the original file.
     let other = d.join("art copy.eps");
     s.execute("document.export", &json!({ "path": other.to_string_lossy(), "format": "eps" })).unwrap();
     assert!(other.exists());
-    s.execute("document.export", &json!({ "path": src.to_string_lossy(), "format": "eps", "acknowledgeLoss": true })).unwrap();
+    assert_eq!(std::fs::read(&src).unwrap(), original);
+    // Replacing the lossy original requires both independent acknowledgements.
+    let exported = s
+        .execute("document.export", &json!({ "path": src.to_string_lossy(), "format": "eps", "acknowledgeLoss": true, "replaceExisting": true }))
+        .unwrap();
+    assert_eq!(exported["format"], "eps");
     assert_ne!(std::fs::read(&src).unwrap(), original);
     std::fs::remove_dir_all(d).ok();
 }
 
 #[test]
-fn a_file_the_import_read_whole_is_written_over_as_before() {
+fn a_file_the_import_read_whole_requires_explicit_replacement() {
     let d = dir("b");
     let src = d.join("plain.eps");
     std::fs::write(&src, "%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 100 100\n%%EndComments\n0 0 1 0 setcmykcolor 10 10 moveto 14 10 lineto 14 14 lineto closepath fill\nshowpage\n%%EOF\n").unwrap();
     let mut s = Session::new();
+    let original = std::fs::read(&src).unwrap();
     s.execute("document.open", &json!({ "path": src.to_string_lossy() })).unwrap();
-    s.execute("document.export", &json!({ "path": src.to_string_lossy(), "format": "eps" })).unwrap();
+    let e = s.execute("document.export", &json!({ "path": src.to_string_lossy(), "format": "eps" })).unwrap_err().to_string();
+    assert!(e.contains("export destination exists") && e.contains("replaceExisting"), "{e}");
+    assert_eq!(std::fs::read(&src).unwrap(), original);
+    let exported = s.execute("document.export", &json!({ "path": src.to_string_lossy(), "format": "eps", "replaceExisting": true })).unwrap();
+    assert_eq!(exported["format"], "eps");
+    assert_ne!(std::fs::read(&src).unwrap(), original);
     std::fs::remove_dir_all(d).ok();
 }
 

@@ -84,7 +84,7 @@ fn save_as_takes_on_path_format_and_options() {
     let svg = s.execute("file.formatOptions", &json!({"format": "svg"})).unwrap();
     assert_eq!(svg["options"]["outlineText"]["value"], false, "another format shows its defaults");
     let ids: Vec<&str> = o["saveFormats"].as_array().unwrap().iter().map(|f| f["id"].as_str().unwrap()).collect();
-    assert_eq!(ids, ["vectorcraft", "template", "pdf", "svg", "svgz", "ai"]);
+    assert_eq!(ids, ["vectorstrike", "vectorcraft", "template", "pdf", "svg", "svgz", "ai"]);
     // SVGZ is gzip-compressed SVG and reopens as SVGZ.
     let svgz = path(&d, "doc.svgz");
     s.execute("file.saveAs", &json!({"path": svgz})).unwrap();
@@ -297,7 +297,7 @@ fn save_plans_suggest_names_and_folders() {
     s.execute("file.info", &json!({"title": "Map"})).unwrap();
     let plan = |s: &Session, mode, p: Value| save_plan(s, mode, &p).unwrap();
     let p = plan(&s, SaveMode::Save, json!({}));
-    assert_eq!((p.path, p.name.as_str(), p.format.id, p.folder), (None, "Map.vectorcraft", "vectorcraft", None));
+    assert_eq!((p.path, p.name.as_str(), p.format.id, p.folder), (None, "Map.vstrike", "vectorstrike", None));
     assert_eq!(plan(&s, SaveMode::Copy, json!({"format": "pdf"})).name, "Map copy.pdf");
     assert_eq!(plan(&s, SaveMode::Template, json!({"format": "svg"})).format.id, "template", "a template is always native");
     assert_eq!(SaveMode::of("file.saveCopy"), Some(SaveMode::Copy));
@@ -352,7 +352,7 @@ fn a_pdf_opened_in_part_is_not_saved_back_over_the_whole_file() {
     // One page of it: Save asks for a name instead of dropping the other page.
     s.execute("document.open", &json!({"path": pdf, "pages": "1"})).unwrap();
     let st = s.doc().unwrap();
-    assert_eq!((st.path.as_deref(), st.format), (None, "vectorcraft"));
+    assert_eq!((st.path.as_deref(), st.format), (None, "vectorstrike"));
     assert!(s.execute("document.save", &json!({})).unwrap().get("dataBase64").is_some());
     let _ = std::fs::remove_dir_all(d);
 }

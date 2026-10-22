@@ -258,6 +258,18 @@ mod tests {
         (with_art(services), written, picks)
     }
 
+    fn desktop_on_disk(picked: &'static str) -> (VectorcraftApp, Written, Rc<RefCell<Vec<FilePick>>>, crate::tests_svg::DiskFiles) {
+        let files = crate::tests_svg::DiskFiles::new("save-options");
+        let (mut app, written, picks) = desktop(picked);
+        let (path, p) = (files.path(picked), picks.clone());
+        app.services.pick_save = Some(Box::new(move |f: &FilePick| {
+            p.borrow_mut().push(f.clone());
+            Some(path.clone())
+        }));
+        files.attach(&mut app, &written);
+        (app, written, picks, files)
+    }
+
     /// A browser app: saves are downloads.
     fn web() -> (VectorcraftApp, Written) {
         let written = Written::default();
@@ -295,16 +307,17 @@ mod tests {
 
     #[test]
     fn save_as_svg_opens_svg_options_then_writes_svg() {
-        let (mut app, written, picks) = desktop("art.svg");
+        let (mut app, written, picks, files) = desktop_on_disk("art.svg");
+        let target = files.path("art.svg");
         let r = app.run("file.saveAs", json!({})).unwrap();
-        assert_eq!((r["pending"].as_str(), r["path"].as_str()), (Some("svgOptions"), Some("art.svg")));
+        assert_eq!((r["pending"].as_str(), r["path"].as_str()), (Some("svgOptions"), Some(target.as_str())));
         // The save panel offers every save format, the document's own first.
         let pick = &picks.borrow()[0];
         let labels: Vec<&str> = pick.filters.iter().map(|f| f.0).collect();
         assert_eq!(labels, ["VectorStrike", "VectorCraft", "VectorCraft Template", "PDF", "SVG", "SVG Compressed", "PDF-compatible .ai"]);
         assert_eq!(pick.name, "Untitled-1.vstrike");
         let d = dialog(&app);
-        assert_eq!((d.kind.as_str(), d.str("path").as_str(), d.str("mode").as_str()), ("svgOptions", "art.svg", "save"));
+        assert_eq!((d.kind.as_str(), d.str("path").as_str(), d.str("mode").as_str()), ("svgOptions", target.as_str(), "save"));
         assert!(written.borrow().is_empty(), "nothing is written before OK");
         frame(&mut app, false);
         assert!(app.ui.dialog.is_some(), "drawing keeps it open");
@@ -312,10 +325,10 @@ mod tests {
         frame(&mut app, true);
         assert!(app.ui.dialog.is_none());
         let (path, bytes) = written.borrow()[0].clone();
-        assert_eq!(path, "art.svg");
+        assert_eq!(path, target);
         assert!(bytes.starts_with(b"<?xml"));
         let st = app.session.active().unwrap();
-        assert_eq!((st.path.as_deref(), st.format, st.is_dirty()), (Some("art.svg"), "svg", false));
+        assert_eq!((st.path.as_deref(), st.format, st.is_dirty()), (Some(target.as_str()), "svg", false));
         assert_eq!((&st.save_options["outlineText"], &st.save_options["styling"]), (&json!(true), &json!("css")), "the SVG Options are remembered");
         assert!(app.ui.status.contains("SVG keeps the artwork"), "{}", app.ui.status);
         // Save writes it back as SVG, with the same options and no questions.
@@ -325,6 +338,7 @@ mod tests {
         app.run("file.save", json!({})).unwrap();
         assert!(app.ui.dialog.is_none() && picks.borrow().len() == 1);
         assert!(written.borrow()[1].1.starts_with(b"<?xml"));
+        assert_eq!(std::fs::read(&target).unwrap(), written.borrow()[1].1);
     }
 
     #[test]
@@ -374,22 +388,24 @@ mod tests {
 
     #[test]
     fn save_as_pdf_asks_with_the_save_pdf_dialog_and_remembers_its_options() {
-        let (mut app, written, _) = desktop("art.pdf");
+        let (mut app, written, _, files) = desktop_on_disk("art.pdf");
+        let target = files.path("art.pdf");
         assert_eq!(app.run("file.saveAs", json!({})).unwrap()["pending"], "savePdf");
         let d = app.ui.dialog.as_mut().unwrap();
-        assert_eq!((d.str("path").as_str(), d.str("__save").as_str()), ("art.pdf", "file.saveAs"));
+        assert_eq!((d.str("path").as_str(), d.str("__save").as_str()), (target.as_str(), "file.saveAs"));
         d.fields.insert("compatibility".into(), json!("1.5"));
         d.fields.insert("createLayers".into(), json!(true));
         super::super::confirm(&mut app).unwrap();
         assert!(app.ui.dialog.is_none());
         assert!(written.borrow()[0].1.starts_with(b"%PDF-1.5"));
         let st = app.session.active().unwrap();
-        assert_eq!((st.path.as_deref(), st.format, st.is_dirty()), (Some("art.pdf"), "pdf", false));
+        assert_eq!((st.path.as_deref(), st.format, st.is_dirty()), (Some(target.as_str()), "pdf", false));
         assert_eq!((st.save_options["compatibility"].clone(), st.save_options["createLayers"].clone()), (json!("1.5"), json!(true)));
         // Save writes the PDF again with those options, without asking.
         app.run("shape.ellipse", json!({"x": 50, "y": 10, "width": 20, "height": 20})).unwrap();
         app.run("file.save", json!({})).unwrap();
         assert!(app.ui.dialog.is_none() && written.borrow()[1].1.starts_with(b"%PDF-1.5"));
+        assert_eq!(std::fs::read(&target).unwrap(), written.borrow()[1].1);
         // Save a Copy as PDF starts from them.
         app.run("file.saveCopy", json!({"format": "pdf"})).unwrap();
         assert_eq!(dialog(&app).str("compatibility"), "1.5");

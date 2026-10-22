@@ -65,17 +65,21 @@ fn serialize_and_reopen() {
 fn save_and_open_path() {
     let mut s = session();
     s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 80, "height": 40})).unwrap();
-    let dir = std::env::temp_dir().join(format!("dc-test-{}", std::process::id()));
-    std::fs::create_dir_all(&dir).unwrap();
+    let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+    let dir = std::env::temp_dir().join(format!("dc-test-{}-{stamp}", std::process::id()));
+    std::fs::create_dir(&dir).unwrap();
     let path = dir.join("t.vectorcraft");
     s.execute("document.save", &json!({"path": path.to_string_lossy()})).unwrap();
     assert!(!s.doc().unwrap().is_dirty());
     s.execute("document.open", &json!({"path": path.to_string_lossy()})).unwrap();
     assert_eq!(s.doc().unwrap().path.as_deref(), Some(path.to_string_lossy().as_ref()));
     let svg = dir.join("t.svg");
-    s.execute("document.export", &json!({"path": svg.to_string_lossy()})).unwrap_or_default();
-    s.execute("document.export", &json!({"format": "svg", "path": svg.to_string_lossy()})).unwrap();
+    let inferred = s.execute("document.export", &json!({"path": svg.to_string_lossy()})).unwrap();
+    assert_eq!(inferred["format"], "svg");
     assert!(std::fs::read_to_string(&svg).unwrap().contains("<svg"));
+    let explicit_svg = dir.join("explicit.svg");
+    s.execute("document.export", &json!({"format": "svg", "path": explicit_svg.to_string_lossy()})).unwrap();
+    assert!(std::fs::read_to_string(&explicit_svg).unwrap().contains("<svg"));
     let _ = std::fs::remove_dir_all(dir);
 }
 
