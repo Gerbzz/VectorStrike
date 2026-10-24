@@ -17,6 +17,12 @@
 
 <p align="center"><a href="#inside-the-workspace">Workspace</a> · <a href="#current-status">Current status</a> · <a href="#build-and-verification">Build</a> · <a href="#source-terms-and-attribution">Credits and source terms</a></p>
 
+## Rust direction and migration status
+
+- **Target:** A Rust-native vector editor, extending the selected VectorCraft foundation rather than rewriting its existing Rust implementation.
+- **Current implementation:** The [Cargo workspace](Cargo.toml) and [desktop entry point](apps/vectorcraft/src/main.rs) are already Rust, with VectorStrike document and desktop adaptations.
+- **Remaining migration:** Continue integration and validation of the existing Rust editor. Broader document fidelity, native interaction, platform acceptance and safe release packaging remain open; the source checkpoint is not a finished migration or release.
+
 ![VectorStrike desktop editor with the original Tidal Forms vector poster open](assets/screenshots/vectorstrike-workspace.png)
 
 *The running Windows source checkpoint at 1440 × 900. “Tidal Forms” is original sample artwork built in VectorStrike for this README, using the app's rectangle, ellipse, path, color, layer, and text commands. No donor or client artwork appears in these captures.*
