@@ -266,19 +266,32 @@ mod tests {
             assert!(close.height() >= 30.0 && [min, max, close].iter().all(|r| r.width() == BUTTON_WIDTH));
             assert_eq!((min.right(), max.right()), (max.left(), close.left()));
             let widgets = w.bar_widgets();
-            assert!(widgets.len() >= 11, "home, eight menus, workspace switcher, search: {widgets:?}");
+            assert!(widgets.len() >= 11, "home, menus, and workspace switcher: {widgets:?}");
             for (i, a) in widgets.iter().enumerate() {
                 assert!(a.right() <= min.left() - 8.0, "{a:?} runs into the caption buttons at {width}");
                 for b in &widgets[i + 1..] {
                     assert!(!a.shrink(0.5).intersects(b.shrink(0.5)), "{a:?} overlaps {b:?} at {width}");
                 }
             }
-            // Wide windows show the whole group; narrow ones drop Discord, then the search icon.
+            // The workspace remains present as the right-side group narrows; search may drop.
+            let workspace =
+                if crate::workspaces::is_builtin(&w.app.ui.workspace) { tl!(&w.app.ui.workspace).to_string() } else { w.app.ui.workspace.clone() };
             let texts: Vec<String> = texts(&out).into_iter().map(|(t, _)| t).collect();
             let has = |s: &str| texts.iter().any(|t| t == s);
-            assert_eq!(has("Discord"), width > 1000.0, "{width}: {texts:?}");
+            assert!(has(&workspace), "{width}: {texts:?}");
             // Search is an icon only (as in PhotoCraft): its label lives in the tooltip.
-            assert!(!has("Search commands and tools"), "{width}: {texts:?}");
+            assert!(!has(tl!("Search commands and tools")), "{width}: {texts:?}");
+            if width == 1440.0 {
+                // Search is the app bar's only 28 × 28 pt clickable widget.
+                let search: Vec<Rect> = widgets.into_iter().filter(|r| r.size() == vec2(28.0, 28.0)).collect();
+                assert_eq!(search.len(), 1, "one search icon at {width}: {search:?}");
+                let search = search[0].center();
+                assert!(!w.app.ui.palette_open, "the command palette starts closed");
+                w.click(search);
+                assert!(w.app.ui.palette_open, "the search icon opens the command palette");
+                w.click(search);
+                assert!(!w.app.ui.palette_open, "the search icon closes the command palette");
+            }
         }
     }
 

@@ -8,27 +8,29 @@ use crate::tests_svg::app;
 
 #[test]
 fn save_as_ai_writes_a_pdf_that_reopens_editable() {
-    let (mut app, written) = app("/tmp/art.ai");
+    let (mut app, written, files) = crate::tests_svg::disk_app("art.ai");
+    let target = files.path("art.ai");
     // Save As asks for the .ai options first (M4.38), then writes.
     let r = app.run("file.saveAs", Value::Null).unwrap();
     assert_eq!(r["pending"], "saveOptions", "{r}");
     let d = app.ui.dialog.as_ref().unwrap();
-    assert_eq!((d.str("format").as_str(), d.str("path").as_str(), d.bool("pdfCompatible")), ("ai", "/tmp/art.ai", true));
+    assert_eq!((d.str("format").as_str(), d.str("path").as_str(), d.bool("pdfCompatible")), ("ai", target.as_str(), true));
     let r = crate::dialogs::confirm(&mut app).unwrap();
-    assert_eq!(r["path"], "/tmp/art.ai", "{r}");
+    assert_eq!(r["path"], target, "{r}");
     assert!(app.ui.dialog.is_none());
     let ai = written.borrow()[0].1.clone();
     assert!(ai.starts_with(b"%PDF"));
-    assert_eq!(app.session.active().unwrap().path.as_deref(), Some("/tmp/art.ai"));
+    assert_eq!(app.session.active().unwrap().path.as_deref(), Some(target.as_str()));
     // Save writes .ai again; the document reopens from it.
     app.run("shape.ellipse", json!({"x": 50, "y": 40, "width": 20, "height": 20})).unwrap();
     app.run("file.save", Value::Null).unwrap();
     let saved = written.borrow()[1].clone();
-    assert_eq!(saved.0, "/tmp/art.ai");
+    assert_eq!(saved.0, target);
+    assert_eq!(std::fs::read(&target).unwrap(), saved.1);
     let layers = app.session.doc().unwrap().doc.layers.clone();
-    crate::io::open_bytes(&mut app, "/tmp/art.ai", &saved.1, Some("/tmp/art.ai".into())).unwrap();
+    crate::io::open_bytes(&mut app, &target, &saved.1, Some(target.clone())).unwrap();
     assert_eq!(app.session.doc().unwrap().doc.layers, layers);
-    assert_eq!(app.session.active().unwrap().path.as_deref(), Some("/tmp/art.ai"));
+    assert_eq!(app.session.active().unwrap().path.as_deref(), Some(target.as_str()));
 }
 
 #[test]

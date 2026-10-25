@@ -162,11 +162,11 @@ fn a_picked_folder_inside_other_apps_folders_is_refused() {
     ] {
         let p = search(&root, picked, Limits::default(), 1, &[]);
         assert_eq!(p.state(), "failed", "{picked}");
-        assert!(p.error().is_some_and(|e| e.contains("doesn't search other apps' or the system's folders")), "{picked}: {p:?}");
+        assert!(p.error().is_some_and(|e| e.contains("other apps' and system folders are not searched")), "{picked}: {p:?}");
     }
     for picked in ["Users/Shared/x", "Users/Public/x"] {
         let p = search(&root, picked, Limits::default(), 1, &[]);
-        assert!(p.error().is_some_and(|e| e.contains("doesn't search the Shared or Public folder in Users")), "{picked}: {p:?}");
+        assert!(p.error().is_some_and(|e| e.contains("the Shared or Public folder in Users is not searched")), "{picked}: {p:?}");
     }
     // Cloud folders, a hidden folder of the user's and another system's root are searched when
     // picked.

@@ -81,7 +81,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	Менше значення точніше відтворює обведення; більше дає менше точок і плавніші криві.
 	A new preset starting from the selected one	Новий набір на основі вибраного
 	A saved copy of the selected preset	Збережена копія вибраного набору
-	About VectorCraft	Про програму VectorCraft
+	About VectorStrike	Про програму VectorStrike
 	above	зверху
 	Absolute Position	Абсолютна позиція
 	Accurate	Точний
@@ -223,6 +223,7 @@
 	Artboard:	Монтажна область:
 	Artboards	Монтажні області
 	ArtCraft Website	Веб-сайт ArtCraft
+	ArtCraft upstream website	Вебсайт початкового проєкту ArtCraft
 	ArtCraft website	Веб-сайт ArtCraft
 	Artwork Colors	Кольори малюнка
 	As Multiple Assets	Як кілька ресурсів
@@ -2057,7 +2058,7 @@
 	Quarter Space	Четверта шпація
 	Quick Actions	Швидкі дії
 	Quickly start a new file	Швидко створити новий файл
-	Quit VectorCraft	Вийти з VectorCraft
+	Quit VectorStrike	Вийти з VectorStrike
 	Radar Graph Tool	Інструмент «Пелюсткова діаграма»
 	Radial	Радіальний
 	Radial Glows	Радіальні світіння
@@ -2175,7 +2176,7 @@
 	{count} folder(s) or file(s) couldn't be read	Не вдалося прочитати папок або файлів: {count}
 	The search stopped at its limit: search a smaller folder.	Пошук зупинився на межі: виберіть меншу папку.
 	Copy only fonts you own or are licensed to install.	Копіюйте лише шрифти, які належать вам або які ви маєте право встановлювати за ліцензією.
-	VectorCraft copies the fonts to {folder}.	VectorCraft копіює шрифти в {folder}.
+	VectorStrike copies the fonts to {folder}.	VectorStrike копіює шрифти в {folder}.
 	Registered Trademark Symbol	Символ зареєстрованого товарного знаку
 	Registration marks	Мітки поєднання
 	Registry name:	Ім’я у реєстрі:
@@ -3086,10 +3087,12 @@
 	Vector Halftone	Векторний напівтон
 	Vector Halftone…	Векторний напівтон…
 	Vector illustration — fast, open, scriptable.	Векторне малювання — швидке, відкрите, кероване сценаріями.
-	VectorCraft didn't quit normally last time. These documents had unsaved changes:	VectorCraft не завершився нормально минулого разу. У цих документах були незбережені зміни:
-	VectorCraft Help…	Довідка VectorCraft…
+	VectorStrike didn't quit normally last time. These documents had unsaved changes:	VectorStrike не завершився нормально минулого разу. У цих документах були незбережені зміни:
+	VectorStrike Help…	Довідка VectorStrike…
 	VectorCraft on getartcraft.com	VectorCraft на getartcraft.com
+	VectorCraft upstream project	Початковий проєкт VectorCraft
 	VectorCraft on GitHub	VectorCraft на GitHub
+	VectorCraft upstream source	Вихідний код початкового проєкту VectorCraft
 	Vectors	Вектори
 	Version {version} — open-source vector illustration in pure Rust.	Версія {version} — векторне малювання з відкритим кодом, написане на Rust.
 	Version:	Версія:
@@ -3128,7 +3131,7 @@
 	Web Snap:	Прив’язка до web:
 	Weight	Товщина
 	Weight:	Товщина:
-	Welcome to VectorCraft	Ласкаво просимо до VectorCraft
+	Welcome to VectorStrike	Ласкаво просимо до VectorStrike
 	When pasting text	При вставці тексту
 	White	Білий
 	Widget Position:	Положення віджету:
@@ -3903,7 +3906,7 @@ axis	Both	Обидві
 @msg	the files come to more than 1 GB: add fewer at a time	файли займають понад 1 ГБ: додавайте менше за раз
 @msg	every numbered name for it is taken in the Fonts folder	усі нумеровані імена для нього вже зайняті в папці Fonts
 	Services	Служби
-	Hide VectorCraft	Приховати VectorCraft
+	Hide VectorStrike	Приховати VectorStrike
 	Zoom	Масштаб
 	Bring All to Front	Усі вікна на передній план
 	Settings	Налаштування
@@ -3911,7 +3914,7 @@ axis	Both	Обидві
 	On: one locked object showing the document, updated when it changes.	Увімк.: один заблокований об’єкт, який показує документ і оновлюється під час його зміни.
 	Off: an editable copy of its art, embedded in this document.	Вимк.: редагована копія графіки, вбудована в цей документ.
 	Images: link to the file instead of only embedding it.	Зображення: пов’язувати із файлом замість простого впровадження.
-	VectorCraft documents: one locked object, updated when the file changes.	Документи VectorCraft: один заблокований об’єкт, який оновлюється під час зміни файлу.
+	VectorStrike documents: one locked object, updated when the file changes.	Документи VectorStrike: один заблокований об’єкт, який оновлюється під час зміни файлу.
 	A file dialog is open: choose there first	Відкрито вікно вибору файлу: спочатку зробіть вибір у ньому
 	Shaper	Формоутворення
 	Expand Shaper Group	Розібрати групу формоутворення
@@ -4086,3 +4089,11 @@ lighting	Light	Світло
 	Vertical Guide	Вертикальна напрямна
 	Horizontal Guide	Горизонтальна напрямна
 	Move Guide to Layer	Перемістити напрямну на шар
+@msg	can't save version {0}: supported versions are {MIN_VERSION} to {VERSION}	не вдається зберегти версію {0}: підтримуються версії від {MIN_VERSION} до {VERSION}
+@msg	file version {0} is newer than this editor supports ({VERSION})	версія файлу {0} новіша за підтримувану цим редактором ({VERSION})
+@msg	not a native vector document: {0}	це не векторний документ у власному форматі: {0}
+@msg	other apps' and system folders are not searched: {path}	пошук у папках інших програм і системних папках не виконується: {path}
+@msg	save fingerprint state is unavailable	стан відбитка збереження недоступний
+@msg	the Shared or Public folder in Users is not searched: {path}	пошук у папці Shared або Public усередині Users не виконується: {path}
+@msg	{label} failed: {e}	{label}: помилка: {e}
+@msg	{p}: export destination exists; choose another path or set replaceExisting: true	{p}: місце призначення експорту вже існує; виберіть інший шлях або задайте replaceExisting: true

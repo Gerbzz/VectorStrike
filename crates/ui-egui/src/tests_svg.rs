@@ -29,6 +29,57 @@ pub(super) fn app(picked: &str) -> (VectorcraftApp, Written) {
     (app, written)
 }
 
+/// Files owned by one disk-backed desktop-save test.
+pub(super) struct DiskFiles {
+    root: std::path::PathBuf,
+}
+
+impl DiskFiles {
+    pub(super) fn new(tag: &str) -> Self {
+        let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+        let root = std::env::temp_dir().join(format!("vc-ui-save-{tag}-{}-{stamp}", std::process::id()));
+        std::fs::create_dir(&root).unwrap();
+        Self { root }
+    }
+
+    pub(super) fn path(&self, name: &str) -> String {
+        self.root.join(name).to_string_lossy().into_owned()
+    }
+
+    pub(super) fn attach(&self, app: &mut VectorcraftApp, written: &Written) {
+        let (read_root, write_root, w) = (self.root.clone(), self.root.clone(), written.clone());
+        app.services.read = Some(Box::new(move |path: &str| {
+            if std::path::Path::new(path).parent() != Some(read_root.as_path()) {
+                return Err("test read is outside its owned fixture".into());
+            }
+            std::fs::read(path).map_err(|e| e.to_string())
+        }));
+        app.services.write = Some(Box::new(move |path: &str, bytes: &[u8]| {
+            if std::path::Path::new(path).parent() != Some(write_root.as_path()) {
+                return Err("test write is outside its owned fixture".into());
+            }
+            std::fs::write(path, bytes).map_err(|e| e.to_string())?;
+            w.borrow_mut().push((path.to_string(), bytes.to_vec()));
+            Ok(())
+        }));
+    }
+}
+
+impl Drop for DiskFiles {
+    fn drop(&mut self) {
+        // create_dir reserved this directory exclusively for this fixture.
+        let _ = std::fs::remove_dir_all(&self.root);
+    }
+}
+
+/// Opt in to the native host's physical read/write contract for repeated saves.
+pub(super) fn disk_app(name: &str) -> (VectorcraftApp, Written, DiskFiles) {
+    let files = DiskFiles::new("native-options");
+    let (mut app, written) = app(&files.path(name));
+    files.attach(&mut app, &written);
+    (app, written, files)
+}
+
 #[test]
 fn svgz_places_like_svg() {
     let (mut app, _) = app("/tmp/unused.svg");

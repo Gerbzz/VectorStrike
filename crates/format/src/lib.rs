@@ -302,11 +302,11 @@ pub fn save_with(doc: &Document, o: &SaveOptions) -> Result<Vec<u8>, FormatError
     let carried = profiles.values().chain(&pdf).map(|i| i.data.len()).sum::<usize>();
     let size = body.len() + images.values().map(|i| i.data.len()).sum::<usize>() + carried + 256;
     let mut w = Envelope { out: Vec::with_capacity(size), pretty };
-    // Older apps only know the name from before the rename.
+    // Older apps only know the names from before the fork and rename.
     let format = match o.identity {
-        NativeIdentity::VectorStrike => STRIKE_EXTENSION,
-        NativeIdentity::VectorCraft if o.version < 3 => LEGACY_EXTENSION,
-        NativeIdentity::VectorCraft => EXTENSION,
+        NativeIdentity::VectorStrike if o.version == VERSION => STRIKE_EXTENSION,
+        _ if o.version < 3 => LEGACY_EXTENSION,
+        _ => EXTENSION,
     };
     w.field("format", &format)?;
     w.field("version", &o.version)?;
@@ -593,6 +593,26 @@ mod tests {
         assert!(sniff(&bytes));
         assert_eq!(load(&bytes).unwrap().artboards[0].rect, doc.artboards[0].rect);
         assert!(load(&save(&doc, false)).is_ok());
+    }
+
+    #[test]
+    fn native_identity_preserves_older_version_headers() {
+        let doc = Document::new(100.0, 50.0);
+        for (version, craft, strike) in
+            [(1, "drawcraft", "drawcraft"), (2, "drawcraft", "drawcraft"), (3, "vectorcraft", "vectorcraft"), (4, "vectorcraft", "vstrike")]
+        {
+            for (identity, expected_format, generator) in
+                [(NativeIdentity::VectorCraft, craft, "VectorCraft "), (NativeIdentity::VectorStrike, strike, "VectorStrike ")]
+            {
+                let bytes = save_with(&doc, &SaveOptions { identity, version, ..SaveOptions::default() }).unwrap();
+                let j: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+                assert_eq!(j["format"], expected_format, "{identity:?} v{version}");
+                assert_eq!(j["version"], version, "{identity:?} v{version}");
+                assert!(j["generator"].as_str().unwrap().starts_with(generator));
+                assert!(sniff(&bytes));
+                assert_eq!(load(&bytes).unwrap().artboards[0].rect, doc.artboards[0].rect);
+            }
+        }
     }
 
     #[test]
