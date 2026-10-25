@@ -25,3 +25,24 @@ jobs:
         run: python -m pip install Pillow==12.3.0
       - name: Verify approved source, derivatives and runtime bindings
         run: python scripts/check_approved_branding.py
+
+  native-branding:
+    name: Native branding tests and Windows build
+    runs-on: windows-latest
+    timeout-minutes: 90
+    env:
+      VECTORSTRIKE_REQUIRE_WINRES: '1'
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Test shared native branding
+        run: cargo test --locked -p vectorcraft-ui-egui --lib brand::tests::
+      - name: Test desktop target
+        run: cargo test --locked -p vectorcraft --bin vectorstrike
+      - name: Build native executable with required icon resource
+        run: cargo build --locked -p vectorcraft --bin vectorstrike
