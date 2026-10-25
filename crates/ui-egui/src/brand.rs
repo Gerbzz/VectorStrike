@@ -45,9 +45,9 @@ mod tests {
     fn the_icon_decodes_to_a_rounded_128_px_tile() {
         let img = decode();
         assert_eq!(img.size, [128, 128]);
-        // Rounded corners: the corner pixel is transparent, the centre opaque.
+        // Preserve the approved full-canvas derivative, including its 254-alpha center.
         assert_eq!(img.pixels[0].a(), 0);
-        assert_eq!(img.pixels[64 * 128 + 64].a(), 255);
+        assert_eq!(img.pixels[64 * 128 + 64].a(), 254);
     }
 
     #[test]
