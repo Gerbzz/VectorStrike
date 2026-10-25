@@ -1,34 +1,12 @@
-//! Original VectorStrike mark, drawn in Rust without donor-brand image assets.
+//! Approved VectorStrike artwork shared by the native window and app bar.
 
 use egui::{Color32, Context, Id, Rect, TextureHandle, TextureOptions, Ui, pos2};
 
 const SIZE: usize = 128;
 
-fn segment_distance(x: f32, y: f32, a: (f32, f32), b: (f32, f32)) -> f32 {
-    let dx = b.0 - a.0;
-    let dy = b.1 - a.1;
-    let t = (((x - a.0) * dx + (y - a.1) * dy) / (dx * dx + dy * dy)).clamp(0.0, 1.0);
-    ((x - a.0 - t * dx).powi(2) + (y - a.1 - t * dy).powi(2)).sqrt()
-}
-
-/// Original rounded slate tile and geometric V, shared by the window and UI.
+/// Approved handoff artwork, resized as one full canvas without cropping or extra padding.
 pub fn icon_rgba() -> Vec<u8> {
-    let mut pixels = Vec::with_capacity(SIZE * SIZE * 4);
-    for row in 0..SIZE {
-        for col in 0..SIZE {
-            let x = (col as f32 + 0.5) / SIZE as f32;
-            let y = (row as f32 + 0.5) / SIZE as f32;
-            let corner_x = (x - 0.5).abs() - 0.31;
-            let corner_y = (y - 0.5).abs() - 0.31;
-            let outside = corner_x.max(0.0).hypot(corner_y.max(0.0)) - 0.18;
-            let alpha = ((-outside * SIZE as f32).clamp(0.0, 1.0) * 255.0) as u8;
-            let left = segment_distance(x, y, (0.24, 0.27), (0.50, 0.75));
-            let right = segment_distance(x, y, (0.50, 0.75), (0.78, 0.27));
-            let color = if left.min(right) < 0.047 { [92, 228, 209] } else { [21, 30, 52] };
-            pixels.extend_from_slice(&[color[0], color[1], color[2], alpha]);
-        }
-    }
-    pixels
+    include_bytes!("../../../assets/branding/VectorStrike-128.rgba").to_vec()
 }
 
 fn decode() -> egui::ColorImage {
@@ -67,9 +45,9 @@ mod tests {
     fn the_icon_decodes_to_a_rounded_128_px_tile() {
         let img = decode();
         assert_eq!(img.size, [128, 128]);
-        // Rounded corners: the corner pixel is transparent, the centre opaque.
+        // Preserve the approved full-canvas derivative, including its 254-alpha center.
         assert_eq!(img.pixels[0].a(), 0);
-        assert_eq!(img.pixels[64 * 128 + 64].a(), 255);
+        assert_eq!(img.pixels[64 * 128 + 64].a(), 254);
     }
 
     #[test]

@@ -1,70 +1,83 @@
 {
   "app": "VectorStrike",
   "asset": "assets/branding/VectorStrike.png",
-  "method": "Measured rounded alpha mask applied to the original 656x656 logo tile, then translated by whole pixels to center its visible bounds. Original visible RGB and masked visible RGBA were verified unchanged.",
-  "source_tile": {
-    "repository": "Gerbzz/VectorStrike",
-    "commit": "d0dfc2ee077589d55b5a30e9f0f6ef40c383e749",
-    "path": "assets/branding/VectorStrike.png",
-    "sha256": "05c33a9cdadd89381eaf6a641f8b61079fa55c177385bb1fa35132bbaa7d9661",
-    "git_blob_sha": "4da67b84be57f6ae11dbb730e5a8bf99254a51aa"
-  },
-  "mask_and_centering": {
-    "inset_pixels": 1.5,
-    "masked_alpha_bbox": [
-      18,
-      24,
-      638,
-      629
-    ],
-    "centered_alpha_bbox": [
-      18,
-      25,
-      638,
-      630
-    ],
-    "integer_translation": [
-      0,
-      1
-    ],
-    "padding_ltrb": [
-      18,
-      25,
-      18,
-      26
-    ],
-    "original_visible_rgb_exact": true,
-    "masked_visible_rgba_exact": true,
-    "transparent_corners": true
-  },
+  "method": "Exact approved 512x512 PNG from user-provided Strike-Logos-GitHub-2026-10-25 handoff. No crop, translation, recoloring or padding changes.",
+  "handoff_file": "approved/VectorStrike/VectorStrike-logo.png",
+  "sha256": "0b91db169a13a373b820aee362a03bf3958b3bec569dba84c3a8eff230b5aff0",
   "dimensions": [
-    656,
-    656
+    512,
+    512
   ],
   "mode": "RGBA",
-  "sha256": "c2b677eccc94d43807e4d117601e672adff8a1497d6c6883b3af3b5b769943b2",
-  "decoded_rgba_sha256": "75bf3d3902fa673f04d9aa8395edac9b4f0ca08edf8c960870bbb50dd81761da",
-  "git_blob_sha": "931bd48f4d8ab7eeafa2887ba67ef2d0fecc9d76",
-  "tool": "ImageMagick 7.1.2-34 Q16 x64",
-  "original_tile_provenance": {
+  "decoded_rgba_sha256": "f5c97e4db9c37444cb873a602d33a85bf86dade341f156426e8446a9c3565421",
+  "previous_provenance": {
     "app": "VectorStrike",
     "asset": "assets/branding/VectorStrike.png",
-    "method": "Lossless rectangular extraction of original pixels with ImageMagick. No scaling, recoloring, tracing, generation, transparency fabrication or animal changes. Original cream outside rounded corners retained. Labels excluded.",
-    "coordinate_system": "Origin top-left; crop bounds [left, top, right, bottom), right/bottom exclusive.",
-    "source_sha256": "93e0c9b8f786a1d58051e65e3d964bd923967e99f699633ad365fcdcecf90aed",
-    "crop_bounds": [
-      696,
-      0,
-      1352,
-      656
-    ],
+    "method": "Measured rounded alpha mask applied to the original 656x656 logo tile, then translated by whole pixels to center its visible bounds. Original visible RGB and masked visible RGBA were verified unchanged.",
+    "source_tile": {
+      "repository": "Gerbzz/VectorStrike",
+      "commit": "d0dfc2ee077589d55b5a30e9f0f6ef40c383e749",
+      "path": "assets/branding/VectorStrike.png",
+      "sha256": "05c33a9cdadd89381eaf6a641f8b61079fa55c177385bb1fa35132bbaa7d9661",
+      "git_blob_sha": "4da67b84be57f6ae11dbb730e5a8bf99254a51aa"
+    },
+    "mask_and_centering": {
+      "inset_pixels": 1.5,
+      "masked_alpha_bbox": [
+        18,
+        24,
+        638,
+        629
+      ],
+      "centered_alpha_bbox": [
+        18,
+        25,
+        638,
+        630
+      ],
+      "integer_translation": [
+        0,
+        1
+      ],
+      "padding_ltrb": [
+        18,
+        25,
+        18,
+        26
+      ],
+      "original_visible_rgb_exact": true,
+      "masked_visible_rgba_exact": true,
+      "transparent_corners": true
+    },
     "dimensions": [
       656,
       656
     ],
-    "sha256": "05c33a9cdadd89381eaf6a641f8b61079fa55c177385bb1fa35132bbaa7d9661",
-    "decoded_rgb_sha256": "4b7ffb55c102946c56821bcddb950f2c95b12db27be2604d9b7c8b21d21ebf1f",
-    "pixel_equality_verified": true,
-    "git_blob_sha": "4da67b84be57f6ae11dbb730e5a8bf99254a51aa"
+    "mode": "RGBA",
+    "sha256": "c2b677eccc94d43807e4d117601e672adff8a1497d6c6883b3af3b5b769943b2",
+    "decoded_rgba_sha256": "75bf3d3902fa673f04d9aa8395edac9b4f0ca08edf8c960870bbb50dd81761da",
+    "git_blob_sha": "931bd48f4d8ab7eeafa2887ba67ef2d0fecc9d76",
+    "tool": "ImageMagick 7.1.2-34 Q16 x64",
+    "original_tile_provenance": {
+      "app": "VectorStrike",
+      "asset": "assets/branding/VectorStrike.png",
+      "method": "Lossless rectangular extraction of original pixels with ImageMagick. No scaling, recoloring, tracing, generation, transparency fabrication or animal changes. Original cream outside rounded corners retained. Labels excluded.",
+      "coordinate_system": "Origin top-left; crop bounds [left, top, right, bottom), right/bottom exclusive.",
+      "source_sha256": "93e0c9b8f786a1d58051e65e3d964bd923967e99f699633ad365fcdcecf90aed",
+      "crop_bounds": [
+        696,
+        0,
+        1352,
+        656
+      ],
+      "dimensions": [
+        656,
+        656
+      ],
+      "sha256": "05c33a9cdadd89381eaf6a641f8b61079fa55c177385bb1fa35132bbaa7d9661",
+      "decoded_rgb_sha256": "4b7ffb55c102946c56821bcddb950f2c95b12db27be2604d9b7c8b21d21ebf1f",
+      "pixel_equality_verified": true,
+      "git_blob_sha": "4da67b84be57f6ae11dbb730e5a8bf99254a51aa"
+    }
   }
 }

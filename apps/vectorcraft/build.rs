@@ -6,12 +6,14 @@
 
 fn main() -> Result<(), String> {
     println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=../../assets/branding/VectorStrike.ico");
     println!("cargo:rerun-if-env-changed=VECTORSTRIKE_REQUIRE_WINRES");
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() != Ok("windows") {
         return Ok(());
     }
     let mut res = winresource::WindowsResource::new();
-    res.set("ProductName", "VectorStrike")
+    res.set_icon("../../assets/branding/VectorStrike.ico")
+        .set("ProductName", "VectorStrike")
         .set("FileDescription", "VectorStrike vector illustration editor")
         .set("CompanyName", "VectorStrike contributors")
         .set(
