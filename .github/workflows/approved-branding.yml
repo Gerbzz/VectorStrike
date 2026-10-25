@@ -41,7 +41,7 @@ jobs:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
       - name: Test shared native branding
-        run: cargo test --locked -p vectorcraft-ui-egui --lib brand::tests::
+        run: cargo test --locked -p vectorcraft-ui-egui --lib brand::tests
       - name: Test desktop target
         run: cargo test --locked -p vectorcraft --bin vectorstrike
       - name: Build native executable with required icon resource
