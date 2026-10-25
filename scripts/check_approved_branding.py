@@ -13,16 +13,16 @@ class ApprovedBranding(unittest.TestCase):
         self.assertEqual(sha256(p.read_bytes()).hexdigest(), APPROVED)
         with Image.open(p) as image:
             self.assertEqual(image.size, (512,512))
-        self.assertIn('assets/branding/' + APP + '.png', (ROOT/'README.md').read_text())
-        self.assertEqual(json.loads((p.parent/'provenance.json').read_text())['sha256'], APPROVED)
+        self.assertIn('assets/branding/' + APP + '.png', (ROOT/'README.md').read_text(encoding="utf-8"))
+        self.assertEqual(json.loads((p.parent/'provenance.json').read_text(encoding="utf-8"))['sha256'], APPROVED)
     def test_runtime_derivative_and_binding(self):
         source = Image.open(ROOT/'assets/branding'/(APP+'.png')).convert('RGBA')
         raw = ROOT/'assets/branding'/(APP+'-128.rgba')
         self.assertTrue(raw.exists(), 'runtime derivative absent')
         self.assertEqual(raw.read_bytes(), source.resize((128,128),Image.Resampling.LANCZOS).tobytes())
-        self.assertIn(APP+'-128.rgba', (ROOT/'crates/ui-egui/src/brand.rs').read_text())
+        self.assertIn(APP+'-128.rgba', (ROOT/'crates/ui-egui/src/brand.rs').read_text(encoding="utf-8"))
     def test_windows_resource_binding(self):
-        self.assertIn('set_icon("../../assets/branding/VectorStrike.ico")', (ROOT/'apps/vectorcraft/build.rs').read_text())
+        self.assertIn('set_icon("../../assets/branding/VectorStrike.ico")', (ROOT/'apps/vectorcraft/build.rs').read_text(encoding="utf-8"))
 
     def test_all_windows_frames_preserve_full_canvas(self):
         from io import BytesIO
