@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/branding/VectorStrike.png" alt="Original VectorStrike praying mantis logo" width="160" height="160">
+  <img src="assets/branding/VectorStrike.png" alt="Approved VectorStrike praying mantis logo" width="160" height="160">
 </p>
 
 <h1 align="center">VectorStrike</h1>
