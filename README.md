@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/branding/VectorStrike.png" alt="Approved VectorStrike praying mantis logo" width="160" height="160">
+  <img src="docs/branding/VectorStrike.webp" alt="Approved VectorStrike praying mantis logo" width="160" height="160">
 </p>
 
 <h1 align="center">VectorStrike</h1>
@@ -63,7 +63,7 @@ The focused workflow test covers paths, layers, native save and reopen, undo and
 
 ## Source terms and attribution
 
-Original upstream VectorCraft code is provided under its MIT OR Apache-2.0 terms. Keep [`LICENSE-MIT`](LICENSE-MIT), [`LICENSE-APACHE`](LICENSE-APACHE), and [`NOTICE`](NOTICE) with that code. The new VectorStrike modifications and the V-shaped mark still shown inside the retained executable have **no newly granted first-party license stated in this checkout**. That in-app mark differs from the approved original praying-mantis repository logo at [`assets/branding/VectorStrike.png`](assets/branding/VectorStrike.png), shown above. Removed donor artwork is not included.
+Original upstream VectorCraft code is provided under its MIT OR Apache-2.0 terms. Keep [`LICENSE-MIT`](LICENSE-MIT), [`LICENSE-APACHE`](LICENSE-APACHE), and [`NOTICE`](NOTICE) with that code. The new VectorStrike modifications and the V-shaped mark still shown inside the retained executable have **no newly granted first-party license stated in this checkout**. That in-app mark differs from the approved praying-mantis repository logo at [`docs/branding/VectorStrike.webp`](docs/branding/VectorStrike.webp), shown above. Removed donor artwork is not included.
 
 The root workspace retains upstream SPDX and repository metadata. The 22 unchanged donor packages keep their original inherited SPDX license field. The five packages containing local VectorStrike edits omit a package-level license field; their original upstream portions retain the donor grants. The published Windows version resource names the original upstream copyright and refers to `NOTICE` for VectorStrike changes without asserting a combined-code license. Later local metadata edits are not in this public source checkpoint.
 
